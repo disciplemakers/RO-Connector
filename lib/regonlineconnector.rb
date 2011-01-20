@@ -15,21 +15,11 @@ class RegonlineConnector
     @parser.parse_events(@client.getEvents)
   end
   
-  def getEventRegistrations(event_id)
-    @get_event_registrations = @client.getEventRegistrations( event_id )
+  def get_event_registrations(event_id)
+    @parser.parse_registrations(@client.getEventRegistrations(event_id))
   end
   
-  def parseRegistrations(response)
-    @parser.parse_registrations(response)
+  def retrieve_all_registrations(event_id)
+    @parser.parse_all_registrations(@client.retrieveAllRegistrations(event_id))
   end
-  
-  def retrieveAllRegistrations(event_id)
-    @retrieve_all_registrations = @client.retrieveAllRegistrations( event_id )
-  end
-
-  def parseAllRegistrations(response)
-    @parser.parse_all_registrations(response)
-  end
-  
 end
-
