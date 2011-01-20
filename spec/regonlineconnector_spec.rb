@@ -49,6 +49,10 @@ describe "RegonlineConnector" do
     it "should successfully authenticate" do
       @roc.authenticate.should == true
     end
+    
+    describe "with invalid event id" do
+      
+    end
   end
     
   describe "with invalid credentials" do
