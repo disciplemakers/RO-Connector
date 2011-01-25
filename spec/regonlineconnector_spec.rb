@@ -49,10 +49,6 @@ describe "RegonlineConnector" do
     it "should successfully authenticate" do
       @roc.authenticate.should == true
     end
-    
-    describe "with invalid event id" do
-      
-    end
   end
     
   describe "with invalid credentials" do
@@ -113,8 +109,7 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'wrongpassword')
       lambda { roc.simple_event_registrations(1000) }.should raise_exception(RegonlineConnector::AuthenticationError)
     end
-   
-    
+       
     it "should raise authentication error when retrieving fuller event registrations data" do
       mock_RetrieveAllRegistrations = mock('RetrieveAllRegistrations')
       mock_RetrieveAllRegistrations.should_receive(:RetrieveAllRegistrations).and_raise(RegonlineConnector::AuthenticationError)
@@ -125,6 +120,17 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'wrongpassword')
       lambda { roc.event_registrations(1000) }.should raise_exception(RegonlineConnector::AuthenticationError)
     end
-    
+
+    it "should raise authentication error when retrieving fuller single registration data" do
+      mock_RetrieveSingleRegistration = mock('RetrieveSingleRegistration')
+      mock_RetrieveSingleRegistration.should_receive(:RetrieveSingleRegistration).and_raise(RegonlineConnector::AuthenticationError)
+      
+      # Instantiate our mock RetrieveSingleRegistration object instead of a real one.
+      RegonlineConnector::Client::RetrieveSingleRegistration.should_receive(:new).with(1000, 10000, 'joeuser', 'wrongpassword').and_return(mock_RetrieveSingleRegistration)
+      
+      roc = RegonlineConnector.new(100, 'joeuser', 'wrongpassword')
+      lambda { roc.registration(1000,10000) }.should raise_exception(RegonlineConnector::AuthenticationError)
+    end
+     
   end
 end
