@@ -13,6 +13,11 @@ class RegonlineConnector
      end
      
      # Returns hash of registration hashes 
+     def parse_registration(response)
+       registration = elements_to_hash(response, "//Registration", "registrationID")
+     end
+     
+     # Returns hash of registration hashes 
      def parse_registrations(response)
        registrations = attributes_to_hash(response, "//registration", "id")
      end

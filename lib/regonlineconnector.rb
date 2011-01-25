@@ -48,9 +48,9 @@ class RegonlineConnector
   end
     
   # Returns hashed data from RegOnline's retrieveSingleRegistration
-  # method. Not yet implemented.
+  # method.
   def registration(event_id, registration_id)
-    raise NotImplementedError
+    @parser.parse_registration(@client.retrieveSingleRegistration(event_id, registration_id).RetrieveSingleRegistration)
   end
   
   # Updates regonline registrations from an XML file using the

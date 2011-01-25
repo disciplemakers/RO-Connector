@@ -1,6 +1,7 @@
 require 'regonlineconnector/client/getevents'
 require 'regonlineconnector/client/geteventregistrations'
 require 'regonlineconnector/client/retrieveallregistrations'
+require 'regonlineconnector/client/retrievesingleregistration'
 require 'base64'
 require 'rubygems'
 require 'zip/zip'
@@ -39,6 +40,14 @@ class RegonlineConnector
           RegonlineConnector::Client::RetrieveAllRegistrations.new(event_id,
                                                                    @username,
                                                                    @password)
+    end
+    
+    def retrieveSingleRegistration(event_id, registration_id)
+      retrieve_single_registration = 
+          RegonlineConnector::Client::RetrieveSingleRegistration.new(event_id,
+                                                                     registration_id,
+                                                                     @username,
+                                                                     @password)
     end
     
     private
