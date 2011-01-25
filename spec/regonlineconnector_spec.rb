@@ -74,7 +74,7 @@ describe "RegonlineConnector" do
       # Create a mock GetEvents object (this is the object that wraps
       # RegOnline's getEvents.asmx service).
       mock_getEvents = mock('getEvents')
-      mock_getEvents.should_receive(:byAccountID).and_raise(RegonlineConnector::AuthenticationError)
+      mock_getEvents.should_receive(:ByAccountID).and_raise(RegonlineConnector::AuthenticationError)
       
       # Instantiate our mock GetEvents object instead of a real one.
       RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'wrongpassword').and_return(mock_getEvents)
