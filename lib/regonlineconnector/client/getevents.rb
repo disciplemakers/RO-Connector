@@ -32,6 +32,11 @@ class RegonlineConnector
         response = @event_getter.ByAccountID({"AccountID" => @account_id,
                                                "Username"  => @username,
                                                "Password"  => @password})
+
+        if response.byAccountIDResult == 'The credentials you supplied are not valid.'
+          raise RegonlineConnector::AuthenticationError
+        end
+        
         response.byAccountIDResult
       end
     
@@ -40,11 +45,17 @@ class RegonlineConnector
                                                       "Username"  => @username,
                                                       "Password"  => @password,
                                                       "EventId"   => event_id})
+        
+        if response.byAccountIDEventIDResult == 'The credentials you supplied are not valid.'
+          raise RegonlineConnector::AuthenticationError
+        end
+                                                      
         response.byAccountIDEventIDResult
       end
     
       def byAccountIDWithFilters
-        # Insert code here ;)      
+        raise NotImplementedError
+        # Insert code here ;)   
       end
                                           
     end
