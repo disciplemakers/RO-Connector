@@ -29,7 +29,7 @@ class RegonlineConnector
                                                              @password)
     end
     
-    def getEventFields(event_id, exclude_amounts)
+    def getEventFields(event_id, exclude_amounts = "false")
       get_event_fields = RegonlineConnector::Client::GetEventFields(event_id,
                                                                     @username,
                                                                     @password,

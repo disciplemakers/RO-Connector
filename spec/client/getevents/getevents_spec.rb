@@ -115,14 +115,14 @@ describe "GetEvents" do
               ).and_return(mock_WSDLDriverFactory)
     end
     
-    it "ByAccountID should raise an authentication error with bad password" do
+    it "ByAccountID should still return xml invalid credentials message with bad password" do
       roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'bad_password')
-      lambda { roc_ge.ByAccountID }.should raise_exception(RegonlineConnector::AuthenticationError)
+      roc_ge.ByAccountID.should == @xml
     end
     
-    it "ByAccountIDEventID should raise an authentication error with bad password" do
+    it "ByAccountIDEventID should still return xml invalid credentials message with bad password" do
       roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'bad_password') 
-      lambda { roc_ge.ByAccountIDEventID(999999) }.should raise_exception(RegonlineConnector::AuthenticationError)
+      roc_ge.ByAccountIDEventID(999999).should == @xml
     end
   end
   

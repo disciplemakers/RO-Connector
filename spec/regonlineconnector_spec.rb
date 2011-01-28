@@ -70,7 +70,7 @@ describe "RegonlineConnector" do
       # Create a mock GetEvents object (this is the object that wraps
       # RegOnline's getEvents.asmx service).
       mock_getEvents = mock('getEvents')
-      mock_getEvents.should_receive(:ByAccountID).and_raise(RegonlineConnector::AuthenticationError)
+      mock_getEvents.should_receive(:ByAccountID).and_return("The credentials you supplied are not valid.")
       
       # Instantiate our mock GetEvents object instead of a real one.
       RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'wrongpassword').and_return(mock_getEvents)
@@ -83,7 +83,7 @@ describe "RegonlineConnector" do
       # Create a mock GetEvents object (this is the object that wraps
       # RegOnline's getEvents.asmx service).
       mock_getEvents = mock('getEvents')
-      mock_getEvents.should_receive(:byAccountIDEventID).with(1000).and_raise(RegonlineConnector::AuthenticationError)
+      mock_getEvents.should_receive(:ByAccountIDEventID).with(1000).and_return("The credentials you supplied are not valid.")
       
       # Instantiate our mock GetEvents object instead of a real one.
       RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'wrongpassword').and_return(mock_getEvents)

@@ -17,12 +17,20 @@ class RegonlineConnector
   
   # Returns hashed data from RegOnline's getEvents.byAccountID method.
   def events
-    @parser.parse_events(@client.getEvents.ByAccountID)
+    events = @client.getEvents.ByAccountID
+    if events.include?("The credentials you supplied are not valid.")
+          raise RegonlineConnector::AuthenticationError
+    end
+    @parser.parse_events(events)
   end
   
   # Returns hashed data from RegOnline's getEvents.byAccountIDEventID method.
   def event(event_id)
-    @parser.parse_events(@client.getEvents.byAccountIDEventID(event_id))
+    event = @client.getEvents.ByAccountIDEventID(event_id)
+    if event == 'The credentials you supplied are not valid.'
+          raise RegonlineConnector::AuthenticationError
+    end
+    @parser.parse_events(event)
   end
   
   # Returns hashed data from RegOnline's getEvents.byAccountIDWithFilters
@@ -34,7 +42,15 @@ class RegonlineConnector
   # Returns hashed data from RegOnline's geteventfields.RetrieveEventFields2
   # method. Not yet implemented.
   def event_fields(event_id, exclude_amounts=false)
-    raise NotImplementedError
+    begin
+      @client.getEventFields.RetrieveEventFields2
+    rescue SOAP::FaultError => exception
+      if exception.to_s.include?("Authentication failure")
+        raise RegonlineConnector::AuthenticationError
+      else
+        raise RegonlineConnector::RegonlineServerError
+      end
+    end
   end
   
   # Returns hashed data from RegOnline's retrieveAllRegistrations method.

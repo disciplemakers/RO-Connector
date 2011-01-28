@@ -6,7 +6,7 @@ class RegonlineConnector
 
     class GetEventFields
 
-      def initialize(event_id, username, password, exclude_amounts = "false" )
+      def initialize(event_id, username, password, exclude_amounts)
         @event_id = event_id
         @username = username
         @password = password
@@ -16,24 +16,13 @@ class RegonlineConnector
       end
 
       def RetrieveEventFields2
-        begin
           response = @field_getter.RetrieveEventFields2(
                                                 {"login"    => @username,
                                                  "password" => @password,
                                                  "eventID"  => @event_id,
                                                  "excludeAmounts" => @exclude_amounts})
           response.retrieveEventFields2Result
-        rescue SOAP::FaultError => exception
-          if exception.to_s.include?("Authentication failure")
-            raise RegonlineConnector::AuthenticationError
-          else
-            raise RegonlineConnector::RegonlineServerError
-          end
-        end
       end
-      
     end
-  
   end
-  
 end

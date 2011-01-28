@@ -13,7 +13,7 @@ describe "GetEventFields" do
       mock_RPCDriver = mock('Driver')
       mock_WSDLDriverFactory.should_receive(:create_rpc_driver).and_return(mock_RPCDriver)
       SOAP::WSDLDriverFactory.should_receive(:new).with('http://www.regonline.com/webservices/getEventFields.asmx?WSDL').and_return(mock_WSDLDriverFactory)
-      @roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'password')
+      @roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'password', 'false')
     end
     
     it "should not give read access to account_id" do
@@ -60,7 +60,7 @@ describe "GetEventFields" do
       SOAP::WSDLDriverFactory.should_receive(:new).with(
               'http://www.regonline.com/webservices/getEventFields.asmx?WSDL'
               ).and_return(mock_WSDLDriverFactory)
-      @roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'password')
+      @roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'password', 'false')
     end
     
     it "should respond to RetrieveEventFields2" do
@@ -98,14 +98,14 @@ describe "GetEventFields" do
               ).and_return(mock_WSDLDriverFactory)
     end
     
-    it "should raise an authentication error with bad password" do 
-      roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'bad_password')
-      lambda { roc_gef.RetrieveEventFields2 }.should raise_exception(RegonlineConnector::AuthenticationError)
+    it "should raise a SOAP fault error with bad password" do 
+      roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'bad_password', 'false')
+      lambda { roc_gef.RetrieveEventFields2 }.should raise_exception(SOAP::FaultError)
     end
     
-    it "should raise a server error with any bad event id" do
-      roc_gef = RegonlineConnector::Client::GetEventFields.new(999, 'joeuser', 'password') 
-      lambda { roc_gef.RetrieveEventFields2 }.should raise_exception(RegonlineConnector::RegonlineServerError)
+    it "should raise a SOAP fault error with any bad event id" do
+      roc_gef = RegonlineConnector::Client::GetEventFields.new(999, 'joeuser', 'password', 'false') 
+      lambda { roc_gef.RetrieveEventFields2 }.should raise_exception(SOAP::FaultError)
     end
   end
   
