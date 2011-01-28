@@ -2,6 +2,7 @@ require 'regonlineconnector/client/getevents'
 require 'regonlineconnector/client/geteventregistrations'
 require 'regonlineconnector/client/retrieveallregistrations'
 require 'regonlineconnector/client/retrievesingleregistration'
+require 'regonlineconnector/client/geteventfields'
 require 'base64'
 require 'rubygems'
 require 'zip/zip'
@@ -26,6 +27,13 @@ class RegonlineConnector
       get_events = RegonlineConnector::Client::GetEvents.new(@account_id, 
                                                              @username,
                                                              @password)
+    end
+    
+    def getEventFields(event_id, exclude_amounts)
+      get_event_fields = RegonlineConnector::Client::GetEventFields(event_id,
+                                                                    @username,
+                                                                    @password,
+                                                                    exclude_amounts)
     end
     
     def getEventRegistrations(event_id)
