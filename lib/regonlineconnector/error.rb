@@ -6,4 +6,7 @@ class RegonlineConnector
   # Raised when Regonline reports invalid credentials
   class AuthenticationError < Error; end
   
+  # Raised when Regonline server gives other SOAP fault error
+  class RegonlineServerError < Error; end
+  
 end
