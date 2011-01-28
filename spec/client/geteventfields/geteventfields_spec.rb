@@ -16,8 +16,8 @@ describe "GetEventFields" do
       @roc_gef = RegonlineConnector::Client::GetEventFields.new(100, 'joeuser', 'password', 'false')
     end
     
-    it "should not give read access to account_id" do
-      lambda { @roc_gef.account_id }.should raise_exception(NoMethodError)
+    it "should not give read access to event_id" do
+      lambda { @roc_gef.event_id }.should raise_exception(NoMethodError)
     end
     
     it "should not give read access to username" do
@@ -28,8 +28,12 @@ describe "GetEventFields" do
       lambda { @roc_gef.password }.should raise_exception(NoMethodError)
     end
     
-    it "should not give write access to account_id" do
-      lambda { @roc_gef.account_id=200 }.should raise_exception(NoMethodError)
+    it "should not give read access to exclude_amounts" do
+      lambda { @roc_gef.exclude_amounts }.should raise_exception(NoMethodError)
+    end
+        
+    it "should not give write access to event_id" do
+      lambda { @roc_gef.event_id=200 }.should raise_exception(NoMethodError)
     end
     
     it "should not give write access to username" do
@@ -39,6 +43,11 @@ describe "GetEventFields" do
     it "should not give write access to password" do
       lambda { @roc_gef.password='password' }.should raise_exception(NoMethodError)
     end
+    
+    it "should not give write access to exclude_amounts" do
+      lambda { @roc_gef.password='exclude_amounts' }.should raise_exception(NoMethodError)
+    end
+    
   end
   
   describe "with valid credentials" do

@@ -16,8 +16,8 @@ describe "RetrieveAllRegistrations" do
       @roc_rar = RegonlineConnector::Client::RetrieveAllRegistrations.new(100, 'joeuser', 'password')
     end
     
-    it "should not give read access to account_id" do
-      lambda { @roc_rar.account_id }.should raise_exception(NoMethodError)
+    it "should not give read access to event_id" do
+      lambda { @roc_rar.event_id }.should raise_exception(NoMethodError)
     end
     
     it "should not give read access to username" do
@@ -28,8 +28,8 @@ describe "RetrieveAllRegistrations" do
       lambda { @roc_rar.password }.should raise_exception(NoMethodError)
     end
     
-    it "should not give write access to account_id" do
-      lambda { @roc_rar.account_id=200 }.should raise_exception(NoMethodError)
+    it "should not give write access to event_id" do
+      lambda { @roc_rar.event_id=200 }.should raise_exception(NoMethodError)
     end
     
     it "should not give write access to username" do
