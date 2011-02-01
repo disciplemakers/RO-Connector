@@ -16,6 +16,10 @@ describe "GetEvents" do
       @roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'password')
     end
     
+    it "should show byAccountIDWithFilters as not implemented" do
+      lambda { @roc_ge.byAccountIDWithFilters }.should raise_exception(NotImplementedError)
+    end
+    
     it "should not give read access to account_id" do
       lambda { @roc_ge.account_id }.should raise_exception(NoMethodError)
     end
@@ -89,6 +93,10 @@ describe "GetEvents" do
     it "should return XML when ByAccountIDEventID is called" do
       @roc_ge.ByAccountIDEventID(999999).should == @xml
     end
+    
+    it "should successfully authenticate" do
+      @roc_ge.Authenticate.should be_true
+    end
   end
   
   describe "with invalid credentials" do
@@ -113,16 +121,19 @@ describe "GetEvents" do
       SOAP::WSDLDriverFactory.should_receive(:new).with(
               'http://www.regonline.com/webservices/getEvents.asmx?WSDL'
               ).and_return(mock_WSDLDriverFactory)
+      @roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'bad_password')
     end
     
     it "ByAccountID should still return xml invalid credentials message with bad password" do
-      roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'bad_password')
-      roc_ge.ByAccountID.should == @xml
+      @roc_ge.ByAccountID.should == @xml
     end
     
     it "ByAccountIDEventID should still return xml invalid credentials message with bad password" do
-      roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'bad_password') 
-      roc_ge.ByAccountIDEventID(999999).should == @xml
+      @roc_ge.ByAccountIDEventID(999999).should == @xml
+    end
+    
+    it "should not successfully authenticate" do
+      @roc_ge.Authenticate.should be_false
     end
   end
   

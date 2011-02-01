@@ -73,9 +73,9 @@ describe "RegonlineConnector" do
       mock_getEvents.should_receive(:ByAccountID).and_return("The credentials you supplied are not valid.")
       
       # Instantiate our mock GetEvents object instead of a real one.
-      RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'wrongpassword').and_return(mock_getEvents)
+      RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'bad_password').and_return(mock_getEvents)
       
-      roc = RegonlineConnector.new(100, 'joeuser', 'wrongpassword')
+      roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
       lambda { roc.events }.should raise_exception(RegonlineConnector::AuthenticationError)
     end
     
