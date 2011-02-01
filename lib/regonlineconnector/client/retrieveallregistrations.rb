@@ -24,7 +24,7 @@ class RegonlineConnector
             response.retrieveAllRegistrationsResult,
             "/tmp/regonline_connector-#{@username}-#{Time.now.to_i}-retrieveAllRegistrationsResult.zip")
       end
-                                             
+      
     end
   
   end
