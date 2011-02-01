@@ -27,7 +27,7 @@ class RegonlineConnector
   # Returns hashed data from RegOnline's getEvents.byAccountIDEventID method.
   def event(event_id)
     event = @client.getEvents.ByAccountIDEventID(event_id)
-    if event == 'The credentials you supplied are not valid.'
+    if event.include?('The credentials you supplied are not valid.')
           raise RegonlineConnector::AuthenticationError
     end
     @parser.parse_events(event)
@@ -41,9 +41,22 @@ class RegonlineConnector
   
   # Returns hashed data from RegOnline's geteventfields.RetrieveEventFields2
   # method. Not yet implemented.
-  def event_fields(event_id, exclude_amounts=false)
+  def event_fields(event_id, exclude_amounts="false")
     begin
-      @client.getEventFields.RetrieveEventFields2
+      @parser.parse_events(@client.getEventFields(event_id, exclude_amounts).RetrieveEventFields2)
+    rescue SOAP::FaultError => exception
+      if exception.to_s.include?("Authentication failure")
+        raise RegonlineConnector::AuthenticationError
+      else
+        raise RegonlineConnector::RegonlineServerError
+      end
+    end
+  end
+  
+  # Returns hashed data from RegOnline's getEventRegistrations method.
+  def simple_event_registrations(event_id)
+    begin
+      @parser.parse_simple_registrations(@client.getEventRegistrations(event_id).RetrieveRegistrationInfo)
     rescue SOAP::FaultError => exception
       if exception.to_s.include?("Authentication failure")
         raise RegonlineConnector::AuthenticationError
@@ -55,18 +68,29 @@ class RegonlineConnector
   
   # Returns hashed data from RegOnline's retrieveAllRegistrations method.
   def event_registrations(event_id)
-    @parser.parse_registrations(@client.retrieveAllRegistrations(event_id).RetrieveAllRegistrations)
-  end
-  
-  # Returns hashed data from RegOnline's getEventRegistrations method.
-  def simple_event_registrations(event_id)
-    @parser.parse_simple_registrations(@client.getEventRegistrations(event_id).RetrieveRegistrationInfo)
+    begin
+      @parser.parse_registrations(@client.retrieveAllRegistrations(event_id).RetrieveAllRegistrations)
+    rescue SOAP::FaultError => exception
+      if exception.to_s.include?("Authentication failure")
+        raise RegonlineConnector::AuthenticationError
+      else
+        raise RegonlineConnector::RegonlineServerError
+      end
+    end
   end
     
   # Returns hashed data from RegOnline's retrieveSingleRegistration
   # method.
   def registration(event_id, registration_id)
-    @parser.parse_registrations(@client.retrieveSingleRegistration(event_id, registration_id).RetrieveSingleRegistration)
+    begin
+      @parser.parse_registrations(@client.retrieveSingleRegistration(event_id, registration_id).RetrieveSingleRegistration)
+    rescue SOAP::FaultError => exception
+      if exception.to_s.include?("Authentication failure")
+        raise RegonlineConnector::AuthenticationError
+      else
+        raise RegonlineConnector::RegonlineServerError
+      end
+    end
   end
   
   # Updates regonline registrations from an XML file using the
