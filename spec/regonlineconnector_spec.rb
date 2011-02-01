@@ -36,6 +36,40 @@ describe "RegonlineConnector" do
     it "should not give write access to password" do
       lambda { @roc.password='password' }.should raise_exception(NoMethodError)
     end
+    
+    describe "namespace holders should raise not implemented error" do
+      it "update_registrations does not" do
+        lambda { @roc.update_registrations }.should raise_exception(NotImplementedError)
+      end
+      
+      it "report does not" do
+        lambda { @roc.report }.should raise_exception(NotImplementedError)
+      end
+
+      it "check_in does not" do
+        lambda { @roc.check_in }.should raise_exception(NotImplementedError)
+      end
+      
+      it "assign_dna does not" do
+        lambda { @roc.assign_dna }.should raise_exception(NotImplementedError)
+      end
+      
+      it "assign_seat does not" do
+        lambda { @roc.assign_seat }.should raise_exception(NotImplementedError)
+      end
+      
+      it "assign_resource_group does not" do
+        lambda { @roc.assign_resource_group }.should raise_exception(NotImplementedError)
+      end
+      
+      it "assign_room_sharer does not" do
+        lambda { @roc.assign_room_sharer }.should raise_exception(NotImplementedError)
+      end
+      
+      it "set_custom_field_response_status does not" do
+        lambda { @roc.set_custom_field_response_status }.should raise_exception(NotImplementedError)
+      end
+    end
   end
     
   describe "with valid credentials" do
