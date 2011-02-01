@@ -13,24 +13,23 @@ class RegonlineConnector
      end
      
      # Returns hash of registration hashes 
-     def parse_registration(response)
+     def parse_registrations(response)
        registration = elements_to_hash(response, "//Registration", "registrationID")
      end
      
      # Returns hash of registration hashes 
-     def parse_registrations(response)
+     def parse_simple_registrations(response)
        registrations = attributes_to_hash(response, "//registration", "id")
      end
      
-     # Returns hash of event hashes
-     def parse_all_registrations(response)
-       registrations = elements_to_hash(response, "//Registration", "registrationID")
-     end
      
      private
      
      # Returns hash from xml elements
      def elements_to_hash(xml_response, xpath, hash_id)
+       unless xml_response
+         return nil
+       end
        doc = REXML::Document.new xml_response
        entries = Hash.new
        doc.elements.to_a(xpath).each do |xml_element|
@@ -45,13 +44,18 @@ class RegonlineConnector
              entry[el.name] = el.text
            end
          end
-         entries[entry[hash_id]] = entry
+         if entry[hash_id]
+           entries[entry[hash_id]] = entry
+         end
        end
        entries
      end
      
      # Returns hash from xml attributes
      def attributes_to_hash(xml_response, xpath, hash_id)
+       unless xml_response
+         return nil
+       end
        doc = REXML::Document.new xml_response
        entries = Hash.new
        doc.elements.to_a(xpath).each do |xml_element|
@@ -65,7 +69,9 @@ class RegonlineConnector
              entry[name] = value
            end
          end
-         entries[entry[hash_id]] = entry
+         if entry[hash_id]
+           entries[entry[hash_id]] = entry
+         end
        end
        entries
      end

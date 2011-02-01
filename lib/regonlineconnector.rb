@@ -55,18 +55,18 @@ class RegonlineConnector
   
   # Returns hashed data from RegOnline's retrieveAllRegistrations method.
   def event_registrations(event_id)
-    @parser.parse_all_registrations(@client.retrieveAllRegistrations(event_id).RetrieveAllRegistrations)
+    @parser.parse_registrations(@client.retrieveAllRegistrations(event_id).RetrieveAllRegistrations)
   end
   
   # Returns hashed data from RegOnline's getEventRegistrations method.
   def simple_event_registrations(event_id)
-    @parser.parse_registrations(@client.getEventRegistrations(event_id).RetrieveRegistrationInfo)
+    @parser.parse_simple_registrations(@client.getEventRegistrations(event_id).RetrieveRegistrationInfo)
   end
     
   # Returns hashed data from RegOnline's retrieveSingleRegistration
   # method.
   def registration(event_id, registration_id)
-    @parser.parse_registration(@client.retrieveSingleRegistration(event_id, registration_id).RetrieveSingleRegistration)
+    @parser.parse_registrations(@client.retrieveSingleRegistration(event_id, registration_id).RetrieveSingleRegistration)
   end
   
   # Updates regonline registrations from an XML file using the
