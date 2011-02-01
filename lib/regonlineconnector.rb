@@ -101,7 +101,7 @@ class RegonlineConnector
   
   # Returns hashed data from RegOnline's RegOnline.getReport
   # method. Not yet implemented.
-  def report(report_id, event_id, start_date, end_date, add_date)
+  def report #(report_id, event_id, start_date, end_date, add_date)
     raise NotImplementedError
   end
   
@@ -114,39 +114,39 @@ class RegonlineConnector
   
   # Uses the checkinreg.CheckIn method to check an attendee in.
   # Not implemented. 
-  def check_in(registration_id, event_id)
+  def check_in #(registration_id, event_id)
     raise NotImplementedError
   end
   
   # Uses the customfieldresponse.modify method to assign a dna code to an 
   # attendee. Not implemented.
-  def assign_dna(registration_id, event_id, custom_field_id, dna_code)
+  def assign_dna #(registration_id, event_id, custom_field_id, dna_code)
     raise NotImplementedError
   end
   
   # Uses the customfieldresponse.AssignSeat method to assign a seat for an
   # attendee. Not implemented.
-  def assign_seat(registration_id, event_id, custom_field_id, level_id,
-                  section_id, row_id, seat_id, block_code)
+  def assign_seat #(registration_id, event_id, custom_field_id, level_id,
+                  #section_id, row_id, seat_id, block_code)
     raise NotImplementedError
   end
   
   # Uses the registrationWS.Modify method to assign a resource group to an 
   # attendee. Not implemented.
-  def assign_resource_group(registration_id, resource_group_id)
+  def assign_resource_group #(registration_id, resource_group_id)
     raise NotImplementedError
   end
   
   # Uses the registrationWS.assignRoomSharerID method to assign a room sharer
   # to an attendee.  Not implemented.
-  def assign_room_sharer(registration_id, room_sharer_id)
+  def assign_room_sharer #(registration_id, room_sharer_id)
     raise NotImplementedError
   end
   
   # Uses the SetCustomFieldResponseStatus.setStatus method to set an attendee's
   # custom field response status. Not implemented.
-  def set_custom_field_response_status(registration_id, custom_field_id,
-                                       status_id)
+  def set_custom_field_response_status #(registration_id, custom_field_id,
+                                       #status_id)
     raise NotImplementedError
   end
 end
