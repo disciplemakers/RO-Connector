@@ -23,8 +23,7 @@ class RegonlineConnector
                                                "registrationID"   => @registration_id})
                                                
         registration = RegonlineConnector::Client::zip_to_xml(
-            response.retrieveSingleRegistrationResult,
-            "/tmp/regonline_connector-#{@username}-#{Time.now.to_i}-retrieveSingleRegistrationResult.zip")
+            response.retrieveSingleRegistrationResult)
       end
                                              
     end

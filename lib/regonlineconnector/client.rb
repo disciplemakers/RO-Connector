@@ -4,6 +4,7 @@ require 'regonlineconnector/client/geteventregistrations'
 require 'regonlineconnector/client/retrieveallregistrations'
 require 'regonlineconnector/client/retrievesingleregistration'
 require 'base64'
+require 'md5'
 require 'rubygems'
 require 'zip/zip'
 
@@ -61,8 +62,9 @@ class RegonlineConnector
     
     private
     
-    def self.zip_to_xml(response, zip_tmp)
+    def self.zip_to_xml(response)
         response_decoded = Base64.decode64(response)
+        zip_tmp = '/tmp/' + MD5.md5(rand(1234567).to_s).to_s
         
         File.open(zip_tmp, 'wb') do |f|
           f.puts response_decoded
@@ -78,7 +80,7 @@ class RegonlineConnector
         xml_response << '</string>'
         
         File.delete(zip_tmp)
-        
+         
         xml_response
     end
   end
