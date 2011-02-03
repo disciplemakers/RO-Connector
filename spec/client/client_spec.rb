@@ -64,4 +64,8 @@ describe "Client" do
       lambda { @roc.password='password' }.should raise_exception(NoMethodError)
     end
   end
+  
+  describe "with valid credentials" do
+    pending "should successfully authenticate"
+  end
 end
