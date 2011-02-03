@@ -74,17 +74,60 @@ describe "RegonlineConnector" do
     
   describe "with valid credentials" do
     before(:each) do
-      mock_getEvents = mock('getEvents')
-      mock_getEvents.should_receive(:Authenticate).and_return(true)
-      
-      # Instantiate our mock GetEvents object instead of a real one.
-      RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'password').and_return(mock_getEvents)
-      @roc = RegonlineConnector.new(100, 'joeuser', 'password')
+      @mock_parser = mock('Parser')
+      @mock_client = mock('Client')
+      RegonlineConnector::Parser.stub(:new).with(no_args()).and_return(@mock_parser)
+      RegonlineConnector::Client.stub(:new).with(100, 'joeuser', 'password').and_return(@mock_client)
+      @roc = RegonlineConnector.new(100, 'joeuser', 'password')      
     end
     
     it "should successfully authenticate" do
+      @mock_client.should_receive(:authenticate).and_return(true)
       @roc.authenticate.should == true
     end
+    
+    describe "events" do
+      before(:each) do
+        @mock_getEvents = mock('getEvents')
+        @mock_client.should_receive(:getEvents).with(no_args()).and_return(@mock_getEvents)        
+      end
+      
+      it "should call the client method" do
+        @mock_getEvents.should_receive(:ByAccountID).and_return("response")
+        @mock_parser.stub(:parse_events).with("response").and_return("response-parsed")
+        @roc.events.should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_getEvents.stub(:ByAccountID).and_return("response")
+        @mock_parser.should_receive(:parse_events).with("response").and_return("response-parsed")
+        @roc.events.should == "response-parsed"
+      end
+    end
+
+    describe "event" do
+      before(:each) do
+        @mock_getEvents = mock('getEvents')
+        @mock_client.should_receive(:getEvents).with(no_args()).and_return(@mock_getEvents)        
+      end
+      
+      it "should call the client method" do
+        @mock_getEvents.should_receive(:ByAccountIDEventID).with(1000).and_return("response")
+        @mock_parser.stub(:parse_events).with("response").and_return("response-parsed")
+        @roc.event(1000).should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_getEvents.stub(:ByAccountIDEventID).with(1000).and_return("response")
+        @mock_parser.should_receive(:parse_events).with("response").and_return("response-parsed")
+        @roc.event(1000).should == "response-parsed"
+      end
+    end
+    
+    pending "event_fields"
+    pending "simple_event_registrations"
+    pending "event_registrations"
+    pending "registration"
   end
     
   describe "with invalid credentials" do
