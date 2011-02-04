@@ -88,57 +88,78 @@ describe "RetrieveAllRegistrations" do
       mock_WSDLDriverFactory = mock('SOAPWSDLDriverFactory')
       mock_RPCDriver = mock('SOAPRPCDriver')
       mock_MappingObject = mock('SOAPMappingObject')
-      mock_MappingObject.stub(:retrieveAllRegistrationsResult).and_return(@data)
-      mock_RPCDriver.stub(:RetrieveAllRegistrations).with(
-                                    {"customerUserName" => 'joeuser',
-                                     "customerPassword" => 'password',
-                                     "eventID"          => 1000}
+      mock_MappingObject.stub(:getReportResult).and_return(@data)
+      mock_RPCDriver.stub(:getReport).with(
+                                    {"login"      => 'joeuser',
+                                     "pass"       => 'password',
+                                     "eventID"    => 1000,
+                                     "reportID"   => 10000,
+                                     "customerID" => 100,
+                                     "startDate"  => '1/1/2010',
+                                     "endDate"    => '12/31/2010',
+                                     "bAddDate"   => 'true'}
                                      ).and_return(mock_MappingObject)
       mock_WSDLDriverFactory.should_receive(:create_rpc_driver).and_return(mock_RPCDriver)
       SOAP::WSDLDriverFactory.should_receive(:new).with(
-              'http://www.regonline.com/webservices/RetrieveAllRegistrations.asmx?WSDL'
+              'http://www.regonline.com/activereports/RegOnline.asmx?WSDL'
               ).and_return(mock_WSDLDriverFactory)
       RegonlineConnector::Client.should_receive(:zip_to_xml).and_return(@xml)
-      @roc_rar = RegonlineConnector::Client::RetrieveAllRegistrations.new(1000, 'joeuser', 'password')
+      @roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'password', 10000, 1000, '1/1/2010',
+                                                          '12/31/2010', 'true')
     end
     
     it "should return XML when RetrieveAllRegistrations is called" do
-      @roc_rar.RetrieveAllRegistrations.should == @xml
+      @roc_ro.getReport.should == @xml
     end
   end
   
   describe "with invalid credentials" do
     before(:each) do
+      @xml = "The credentials you supplied are not valid."
+
+      mock_MappingObject = mock('SOAPMappingObject')
+      mock_MappingObject.stub(:getReportResult).and_return(@xml)
+      
       mock_WSDLDriverFactory = mock('SOAPWSDLDriverFactory')
       mock_RPCDriver = mock('SOAPRPCDriver')
-      mock_RPCDriver.stub(:RetrieveAllRegistrations).with(
-                                    {"customerUserName" => 'joeuser',
-                                     "customerPassword" => 'bad_password',
-                                     "eventID"          => 1000}
+      mock_RPCDriver.stub(:getReport).with(
+                                    {"login"      => 'joeuser',
+                                     "pass"       => 'password',
+                                     "eventID"    => 1000,
+                                     "reportID"   => 10000,
+                                     "customerID" => 100,
+                                     "startDate"  => '1/1/2010',
+                                     "endDate"    => '12/31/2010',
+                                     "bAddDate"   => 'true'}
                                      ).and_raise(SOAP::FaultError.new(
                                           SOAP::SOAPFault.new(SOAP::SOAPString.new('Server'),
                                                               SOAP::SOAPString.new('Authentication failure'))))
-      mock_RPCDriver.stub(:RetrieveAllRegistrations).with(
-                              {"customerUserName" => 'joeuser',
-                               "customerPassword" => 'password',
-                               "eventID"          => 9999}
-                               ).and_raise(SOAP::FaultError.new(
-                                    SOAP::SOAPFault.new(SOAP::SOAPString.new('Server'),
-                                                        SOAP::SOAPString.new('Object reference not set to an instance of an object.'))))
+      mock_RPCDriver.stub(:getReport).with(
+                                    {"login"      => 'joeuser',
+                                     "pass"       => 'bad_password',
+                                     "eventID"    => 1000,
+                                     "reportID"   => 10000,
+                                     "customerID" => 100,
+                                     "startDate"  => '1/1/2010',
+                                     "endDate"    => '12/31/2010',
+                                     "bAddDate"   => 'true'}
+                                     ).and_return(mock_MappingObject)
       mock_WSDLDriverFactory.should_receive(:create_rpc_driver).and_return(mock_RPCDriver)
       SOAP::WSDLDriverFactory.should_receive(:new).with(
-              'http://www.regonline.com/webservices/RetrieveAllRegistrations.asmx?WSDL'
+              'http://www.regonline.com/activereports/RegOnline.asmx?WSDL'
               ).and_return(mock_WSDLDriverFactory)
     end
     
-    it "should raise a SOAP fault error with bad password" do 
-      roc_rar = RegonlineConnector::Client::RetrieveAllRegistrations.new(1000, 'joeuser', 'bad_password')
-      lambda { roc_rar.RetrieveAllRegistrations }.should raise_exception(SOAP::FaultError)
+    pending "should still return xml invalid credentials message with bad password" do 
+      roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'bad_password', 10000, 1000, '1/1/2010',
+                                                          '12/31/2010', 'true')
+      lambda { roc_ro.getReport }.should == @xml
     end
     
-    it "should raise a SOAP fault error with any bad event id" do
-      roc_rar = RegonlineConnector::Client::RetrieveAllRegistrations.new(9999, 'joeuser', 'password') 
-      lambda { roc_rar.RetrieveAllRegistrations }.should raise_exception(SOAP::FaultError)
+    pending "should raise a SOAP fault error with bad search criteria" do
+      roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'password', 10000, 1000, '1/1/2010',
+                                                          '12/31/2010', 'true') 
+      lambda { roc_ro.getReport }.should raise_exception(SOAP::FaultError)
     end
   end
   
