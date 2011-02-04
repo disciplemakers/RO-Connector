@@ -123,6 +123,27 @@ describe "RegonlineConnector" do
         @roc.event(1000).should == "response-parsed"
       end
     end
+
+    describe "filtered_events" do
+      before(:each) do
+      	@filter_hash = { 'StatusId' => 1, 'TypeId' => '1'}
+        @mock_getEvents = mock('getEvents')
+        @mock_client.should_receive(:getEvents).with(no_args()).and_return(@mock_getEvents)        
+      end
+      
+      it "should call the client method" do
+        @mock_getEvents.should_receive(:ByAccountIDWithFilters).with(any_args()).and_return("response")
+        @mock_parser.stub(:parse_events).with("response").and_return("response-parsed")
+        @roc.filtered_events(@filter_hash, 'and', 'true').should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+      	
+        @mock_getEvents.stub(:ByAccountIDWithFilters).with(any_args()).and_return("response")
+        @mock_parser.should_receive(:parse_events).with("response").and_return("response-parsed")
+        @roc.filtered_events(@filter_hash, 'and', 'true').should == "response-parsed"
+      end
+    end
     
     describe "event_fields" do
       before(:each) do
@@ -243,11 +264,17 @@ describe "RegonlineConnector" do
     end
    
     
-    it "should raise not implemented error when getting events using filter(s)" do
+    it "should raise authentication error when getting events using filter(s)" do
+      @filter_hash = { 'StatusId' => 1, 'Type_Id' => '1'}
+      @filter_xml = '<filters><StatusId>1</StatusId><Type_Id>1</Type_Id></filters>'
+      mock_getEvents = mock('getEvents')
+      mock_getEvents.should_receive(:ByAccountIDWithFilters).with(@filter_xml, 'and', 'true').and_return("The credentials you supplied are not valid.")
+      RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'bad_password').and_return(mock_getEvents)
+
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
-      lambda { roc.filtered_events('xml', 'and', 'true') }.should raise_exception(NotImplementedError) 
+      lambda { roc.filtered_events(@filter_hash, 'and', 'true') }.should raise_exception(RegonlineConnector::AuthenticationError) 
     end
-   
+    
     it "should raise authentication error when retrieving event fields data" do
       mock_getEventFields = mock('getEventFields')
       mock_getEventFields.should_receive(:RetrieveEventFields2).and_raise(SOAP::FaultError.new(
