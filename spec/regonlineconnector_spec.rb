@@ -124,10 +124,81 @@ describe "RegonlineConnector" do
       end
     end
     
-    pending "event_fields"
-    pending "simple_event_registrations"
-    pending "event_registrations"
-    pending "registration"
+    describe "event_fields" do
+      before(:each) do
+        @mock_getEventFields = mock('getEventFields')
+        @mock_client.should_receive(:getEventFields).with(1000, "false").and_return(@mock_getEventFields)        
+      end
+      
+      it "should call the client method" do
+        @mock_getEventFields.should_receive(:RetrieveEventFields2).with(no_args()).and_return("response")
+        @mock_parser.stub(:parse_events).with("response").and_return("response-parsed")
+        @roc.event_fields(1000).should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_getEventFields.stub(:RetrieveEventFields2).with(no_args()).and_return("response")
+        @mock_parser.should_receive(:parse_events).with("response").and_return("response-parsed")
+        @roc.event_fields(1000).should == "response-parsed"
+      end
+    end
+    
+    describe "simple_event_registrations" do
+      before(:each) do
+        @mock_getEventRegistrations = mock('getEventRegistrations')
+        @mock_client.should_receive(:getEventRegistrations).with(1000).and_return(@mock_getEventRegistrations)        
+      end
+      
+      it "should call the client method" do
+        @mock_getEventRegistrations.should_receive(:RetrieveRegistrationInfo).with(no_args()).and_return("response")
+        @mock_parser.stub(:parse_registrations).with("response").and_return("response-parsed")
+        @roc.simple_event_registrations(1000).should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_getEventRegistrations.stub(:RetrieveRegistrationInfo).with(no_args()).and_return("response")
+        @mock_parser.should_receive(:parse_registrations).with("response").and_return("response-parsed")
+        @roc.simple_event_registrations(1000).should == "response-parsed"
+      end
+    end
+    
+    describe "event_registrations" do
+      before(:each) do
+        @mock_retrieveAllRegistrations = mock('retrieveAllRegistrations')
+        @mock_client.should_receive(:retrieveAllRegistrations).with(1000).and_return(@mock_retrieveAllRegistrations)        
+      end
+      
+      it "should call the client method" do
+        @mock_retrieveAllRegistrations.should_receive(:RetrieveAllRegistrations).with(no_args()).and_return("response")
+        @mock_parser.stub(:parse_registrations).with("response").and_return("response-parsed")
+        @roc.event_registrations(1000).should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_retrieveAllRegistrations.stub(:RetrieveAllRegistrations).with(no_args()).and_return("response")
+        @mock_parser.should_receive(:parse_registrations).with("response").and_return("response-parsed")
+        @roc.event_registrations(1000).should == "response-parsed"
+      end
+    end
+    
+    describe "registration" do
+      before(:each) do
+        @mock_retrieveSingleRegistration = mock('retrieveSingleRegistration')
+        @mock_client.should_receive(:retrieveSingleRegistration).with(1000, 10000).and_return(@mock_retrieveSingleRegistration)        
+      end
+
+      it "should call the client method" do
+        @mock_retrieveSingleRegistration.should_receive(:RetrieveSingleRegistration).with(no_args()).and_return("response")
+        @mock_parser.stub(:parse_registrations).with("response").and_return("response-parsed")
+        @roc.registration(1000, 10000).should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_retrieveSingleRegistration.stub(:RetrieveSingleRegistration).with(no_args()).and_return("response")
+        @mock_parser.should_receive(:parse_registrations).with("response").and_return("response-parsed")
+        @roc.registration(1000, 10000).should == "response-parsed"
+      end
+    end
   end
     
   describe "with invalid credentials" do
