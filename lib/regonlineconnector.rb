@@ -36,7 +36,25 @@ class RegonlineConnector
   # Returns hashed data from RegOnline's getEvents.byAccountIDWithFilters
   # method. Not yet implemented.
   def filtered_events(filter_hash, filter_operator, filter_like_matching)
-    raise NotImplementedError
+    unless filter_like_matching == 'true' || filter_like_matching == 'false'
+      raise ArgumentError "filter_like_matching argument must be either 'true' or 'false'"
+    end 
+    unless filter_operator == 'and' || filter_operator == 'or'
+      raise ArgumentError "filter_operator argument must be either 'and' or 'or'"
+    end
+    unless filter_hash.instance_of?(Hash)
+      raise ArgumentError "filter_hash must be hash"
+    end
+    
+    filter_xml = "<filters>"
+    filter_hash.sort.each {|filter, value| filter_xml << "<#{filter}>#{value}</#{filter}>"}
+    filter_xml << "</filters>"
+    
+    events = @client.getEvents.ByAccountIDWithFilters(filter_xml, filter_operator, filter_like_matching)
+    if events.include?('The credentials you supplied are not valid.')
+          raise RegonlineConnector::AuthenticationError
+    end
+    @parser.parse_events(events)
   end
   
   # Returns hashed data from RegOnline's geteventfields.RetrieveEventFields2
