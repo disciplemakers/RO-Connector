@@ -16,10 +16,6 @@ describe "GetEvents" do
       @roc_ge = RegonlineConnector::Client::GetEvents.new(100, 'joeuser', 'password')
     end
     
-    it "should show byAccountIDWithFilters as not implemented" do
-      lambda { @roc_ge.byAccountIDWithFilters }.should raise_exception(NotImplementedError)
-    end
-    
     it "should not give read access to account_id" do
       lambda { @roc_ge.account_id }.should raise_exception(NoMethodError)
     end
@@ -54,7 +50,7 @@ describe "GetEvents" do
              "</StartDate>\n    <EndDate>2010-10-31T14:00:00-06:00</EndDate>\n" +
              "    <LocationName>Conference Center</LocationName>\n    <Room />\n" +
              "    <Building />\n    <Address1>123 Main Street</Address1>\n" +
-             "    <Address2 />\n    <City>Youtown</City>\n    " +
+             "    <Address2 />\n    <City>Yourtown</City>\n    " +
              "<Region>Pennsylvania</Region>\n    <Country />\n    " +
              "<PostalCode>12345-6789</PostalCode>\n    <Capacity>0</Capacity>\n    " +
              "<Total>14</Total>\n    <Cancelled>2</Cancelled>\n    " +
@@ -64,12 +60,14 @@ describe "GetEvents" do
              "<add_date>2010-05-18T08:37:50.347-06:00</add_date>\n    " +
              "<mod_date>2011-01-25T09:08:40.01-07:00</mod_date>\n  </Table>\n" +
              "</NewDataSet>"
+      @filter_xml = "<filters><Loc_Name>Yourtown</Loc_Name><Type_Id>1</Type_Id></filters>"
 
       mock_WSDLDriverFactory = mock('SOAPWSDLDriverFactory')
       mock_RPCDriver = mock('SOAPRPCDriver')
       mock_MappingObject = mock('SOAPMappingObject')
       mock_MappingObject.stub(:byAccountIDResult).and_return(@xml)
       mock_MappingObject.stub(:byAccountIDEventIDResult).and_return(@xml)
+      mock_MappingObject.stub(:byAccountIDWithFiltersResult).and_return(@xml)
       mock_RPCDriver.stub(:ByAccountID).with({"AccountID" => 100,
                                               "Username"  => 'joeuser',
                                               "Password"  => 'password'}
@@ -78,6 +76,13 @@ describe "GetEvents" do
                                                "Username"  => 'joeuser',
                                                "Password"  => 'password',
                                                "EventId"   => 999999}
+                                             ).and_return(mock_MappingObject)
+      mock_RPCDriver.stub(:ByAccountIDWithFilters).with({"AccountID"      => 100,
+                                                         "Username"       => 'joeuser',
+                                                         "Password"       => 'password',
+                                                         "xmlFilterData"  => @filter_xml,
+                                                         "FilterOperator" => 'and',
+                                                         "LikeMatching"   => 'true'}
                                              ).and_return(mock_MappingObject)
       mock_WSDLDriverFactory.should_receive(:create_rpc_driver).and_return(mock_RPCDriver)
       SOAP::WSDLDriverFactory.should_receive(:new).with(
@@ -94,6 +99,10 @@ describe "GetEvents" do
       @roc_ge.ByAccountIDEventID(999999).should == @xml
     end
     
+    it "should show ByAccountIDWithFilters as not implemented" do
+      @roc_ge.ByAccountIDWithFilters(@filter_xml, 'and', 'true').should == @xml
+    end
+    
     it "should successfully authenticate" do
       @roc_ge.Authenticate.should be_true
     end
@@ -108,6 +117,7 @@ describe "GetEvents" do
       mock_MappingObject = mock('SOAPMappingObject')
       mock_MappingObject.stub(:byAccountIDResult).and_return(@xml)
       mock_MappingObject.stub(:byAccountIDEventIDResult).and_return(@xml)
+      mock_MappingObject.stub(:byAccountIDWithFiltersResult).and_return(@xml)
       mock_RPCDriver.stub(:ByAccountID).with({"AccountID" => 100,
                                               "Username"  => 'joeuser',
                                               "Password"  => 'bad_password'}
@@ -116,6 +126,13 @@ describe "GetEvents" do
                                                "Username"  => 'joeuser',
                                                "Password"  => 'bad_password',
                                                "EventId"   => 999999}
+                                             ).and_return(mock_MappingObject)
+      mock_RPCDriver.stub(:ByAccountIDWithFilters).with({"AccountID"      => 100,
+                                                         "Username"       => 'joeuser',
+                                                         "Password"       => 'bad_password',
+                                                         "xmlFilterData"  => @filter_xml,
+                                                         "FilterOperator" => 'and',
+                                                         "LikeMatching"   => 'true'}
                                              ).and_return(mock_MappingObject)
       mock_WSDLDriverFactory.should_receive(:create_rpc_driver).and_return(mock_RPCDriver)
       SOAP::WSDLDriverFactory.should_receive(:new).with(
@@ -130,6 +147,10 @@ describe "GetEvents" do
     
     it "ByAccountIDEventID should still return xml invalid credentials message with bad password" do
       @roc_ge.ByAccountIDEventID(999999).should == @xml
+    end
+    
+    it "ByAccountIDWithFilters should still return xml invalid credentials message with bad password" do
+      @roc_ge.ByAccountIDWithFilters(@filter_xml, 'and', 'true').should == @xml
     end
     
     it "should not successfully authenticate" do
