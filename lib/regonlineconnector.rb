@@ -56,7 +56,7 @@ class RegonlineConnector
   # Returns hashed data from RegOnline's getEventRegistrations method.
   def simple_event_registrations(event_id)
     begin
-      @parser.parse_simple_registrations(@client.getEventRegistrations(event_id).RetrieveRegistrationInfo)
+      @parser.parse_registrations(@client.getEventRegistrations(event_id).RetrieveRegistrationInfo)
     rescue SOAP::FaultError => exception
       if exception.to_s.include?("Authentication failure")
         raise RegonlineConnector::AuthenticationError
