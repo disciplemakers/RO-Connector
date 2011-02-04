@@ -35,7 +35,7 @@ class RegonlineConnector
   
   # Returns hashed data from RegOnline's getEvents.byAccountIDWithFilters
   # method. Not yet implemented.
-  def filtered_events(filter)
+  def filtered_events(filter_xml, filter_operator, filter_like_matching)
     raise NotImplementedError
   end
   

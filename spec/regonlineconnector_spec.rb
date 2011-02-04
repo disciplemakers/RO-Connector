@@ -245,7 +245,7 @@ describe "RegonlineConnector" do
     
     it "should raise not implemented error when getting events using filter(s)" do
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
-      lambda { roc.filtered_events(1000) }.should raise_exception(NotImplementedError) 
+      lambda { roc.filtered_events('xml', 'and', 'true') }.should raise_exception(NotImplementedError) 
     end
    
     it "should raise authentication error when retrieving event fields data" do
