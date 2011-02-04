@@ -66,6 +66,28 @@ describe "Client" do
   end
   
   describe "with valid credentials" do
-    pending "should successfully authenticate"
+    before(:each) do
+      @roc_client = RegonlineConnector::Client.new(100, 'joeuser', 'password')      
+    end
+    
+    it "should successfully authenticate" do
+      mock_GetEvents = mock('GetEvents')
+      mock_GetEvents.should_receive(:Authenticate).and_return(true)
+      RegonlineConnector::Client::GetEvents.stub(:new).with(100, 'joeuser', 'password').and_return(mock_GetEvents)
+      @roc_client.authenticate.should == true
+    end
+  end
+
+  describe "with invalid credentials" do
+    before(:each) do
+      @roc_client = RegonlineConnector::Client.new(100, 'joeuser', 'bad_password')      
+    end
+    
+    it "should not successfully authenticate" do
+      mock_GetEvents = mock('GetEvents')
+      mock_GetEvents.should_receive(:Authenticate).and_return(false)
+      RegonlineConnector::Client::GetEvents.stub(:new).with(100, 'joeuser', 'bad_password').and_return(mock_GetEvents)
+      @roc_client.authenticate.should == false
+    end
   end
 end
