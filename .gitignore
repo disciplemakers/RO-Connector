@@ -17,6 +17,9 @@ pkg
 # aptana generated
 .project
 
+# rspec config
+.rspec
+
 # Gemfile lock
 Gemfile.lock
 
