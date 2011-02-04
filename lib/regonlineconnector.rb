@@ -37,20 +37,28 @@ class RegonlineConnector
   # method. Not yet implemented.
   def filtered_events(filter_hash, filter_operator, filter_like_matching)
     unless filter_like_matching == 'true' || filter_like_matching == 'false'
-      raise ArgumentError "filter_like_matching argument must be either 'true' or 'false'"
+      raise ArgumentError, "filter_like_matching argument must be either 'true' or 'false'"
     end 
     unless filter_operator == 'and' || filter_operator == 'or'
-      raise ArgumentError "filter_operator argument must be either 'and' or 'or'"
+      raise ArgumentError, "filter_operator argument must be either 'and' or 'or'"
     end
     unless filter_hash.instance_of?(Hash)
-      raise ArgumentError "filter_hash must be hash"
+      raise ArgumentError, "filter hash must be hash"
+    end
+    if filter_hash.empty?
+      raise ArgumentError, "filter hash must not be empty"
     end
     
     filter_xml = "<filters>"
     filter_hash.sort.each {|filter, value| filter_xml << "<#{filter}>#{value}</#{filter}>"}
     filter_xml << "</filters>"
-    
-    events = @client.getEvents.ByAccountIDWithFilters(filter_xml, filter_operator, filter_like_matching)
+
+    begin
+      events = @client.getEvents.ByAccountIDWithFilters(filter_xml, filter_operator, filter_like_matching)
+    rescue SOAP::FaultError
+      raise   RegonlineConnector::RegonlineServerError
+    end
+
     if events.include?('The credentials you supplied are not valid.')
           raise RegonlineConnector::AuthenticationError
     end
