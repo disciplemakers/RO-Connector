@@ -42,7 +42,7 @@ describe "RegonlineConnector" do
         lambda { @roc.update_registrations }.should raise_exception(NotImplementedError)
       end
       
-      it "report does not" do
+      pending "report does not" do
         lambda { @roc.report }.should raise_exception(NotImplementedError)
       end
 
@@ -300,7 +300,7 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
       lambda { roc.simple_event_registrations(1000) }.should raise_exception(RegonlineConnector::AuthenticationError)
     end
-       
+    
     it "should raise authentication error when retrieving fuller event registrations data" do
       mock_RetrieveAllRegistrations = mock('RetrieveAllRegistrations')
       mock_RetrieveAllRegistrations.should_receive(:RetrieveAllRegistrations).and_raise(SOAP::FaultError.new(
@@ -313,7 +313,7 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
       lambda { roc.event_registrations(1000) }.should raise_exception(RegonlineConnector::AuthenticationError)
     end
-
+    
     it "should raise authentication error when retrieving fuller single registration data" do
       mock_RetrieveSingleRegistration = mock('RetrieveSingleRegistration')
       mock_RetrieveSingleRegistration.should_receive(:RetrieveSingleRegistration).and_raise(SOAP::FaultError.new(

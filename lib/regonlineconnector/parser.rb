@@ -21,7 +21,12 @@ class RegonlineConnector
      def parse_simple_registrations(response)
        registrations = attributes_to_hash(response, "//registration", "id")
      end
-     
+
+     # Returns hash of registration hashes from a report
+     def parse_report(response)
+       response_no_escape = response.to_s.gsub!(/_x0020_/,'')
+       events = elements_to_hash(response, "//Table1", "ConfirmationNumber")
+     end     
      
      private
      

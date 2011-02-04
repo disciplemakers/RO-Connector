@@ -119,17 +119,18 @@ class RegonlineConnector
     end
   end
   
+  # Returns hashed data from RegOnline's RegOnline.getReport
+  # method. Not yet implemented.
+  def report(report_id, event_id, start_date, end_date, add_date)
+    raise NotImplementedError
+  end
+  
   # Updates regonline registrations from an XML file using the
   # RegistrationUpdateService.UpdateRegistrations method. Not yet implemented.
   def update_registrations
     raise NotImplementedError
   end
   
-  # Returns hashed data from RegOnline's RegOnline.getReport
-  # method. Not yet implemented.
-  def report #(report_id, event_id, start_date, end_date, add_date)
-    raise NotImplementedError
-  end
   
   #--
   ############################################################################
