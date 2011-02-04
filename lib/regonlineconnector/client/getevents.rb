@@ -43,9 +43,14 @@ class RegonlineConnector
         response.byAccountIDEventIDResult
       end
     
-      def byAccountIDWithFilters
-        raise NotImplementedError
-        # Insert code here ;)   
+      def ByAccountIDWithFilters(filter_xml, filter_operator, filter_like_matching)
+        response = @event_getter.ByAccountIDWithFilters({"AccountID"      => @account_id,
+                                                         "Username"       => @username,
+                                                         "Password"       => @password,
+                                                         "xmlFilterData"  => filter_xml,
+                                                         "FilterOperator" => filter_operator,
+                                                         "LikeMatching"   => filter_like_matching})                                                    
+        response.byAccountIDWithFiltersResult
       end
                                           
     end
