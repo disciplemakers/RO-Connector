@@ -262,7 +262,7 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
       lambda { roc.event(1000) }.should raise_exception(RegonlineConnector::AuthenticationError) 
     end
-   
+    
     
     it "should raise authentication error when getting events using filter(s)" do
       @filter_hash = { 'StatusId' => 1, 'Type_Id' => '1'}
@@ -329,7 +329,45 @@ describe "RegonlineConnector" do
     
   end
   
-  describe "with valid credentials but invalid selection criteria" do   
+  describe "with valid credentials but invalid selection criteria" do
+    describe "when retrieving filtered event data" do
+      before(:each) do
+        @filter_hash = { 'StatusId' => 1, 'Type_Id' => '1'}
+        @filter_xml = '<filters><StatusId>1</StatusId><Type_Id>1</Type_Id></filters>'
+        @mock_getEvents = mock('getEvents')
+        RegonlineConnector::Client::GetEvents.stub(:new).with(100, 'joeuser', 'password').and_return(@mock_getEvents)
+        @roc = RegonlineConnector.new(100, 'joeuser', 'password')
+      end
+
+      it "should raise argument error if not passed a hash" do
+        lambda { @roc.filtered_events("HELLO", 'and', 'true') }.should raise_exception(ArgumentError)
+      end
+
+      it "should raise argument error when filter hash is empty" do
+        lambda { @roc.filtered_events({}, 'and', 'true') }.should raise_exception(ArgumentError)
+      end
+
+      it "should raise argument error when filter hash is nil" do
+        lambda { @roc.filtered_events(nil, 'and', 'true') }.should raise_exception(ArgumentError)
+      end
+
+      it "should raise argument error when filter operator is not 'and' or 'or'" do
+        lambda { @roc.filtered_events(@filter_hash, 'not_and', 'true')}.should raise_exception(ArgumentError)
+      end
+
+      it "should raise argument error when filter like matching is not 'true' or 'false'" do
+        lambda { @roc.filtered_events(@filter_hash, 'and', 'not_true_or_false')}.should raise_exception(ArgumentError)
+      end
+      
+      it "should raise regonline server error when SOAP::FaultError raised (search failed)" do
+        @mock_getEvents.should_receive(:ByAccountIDWithFilters).and_raise(SOAP::FaultError.new(
+                                SOAP::SOAPFault.new(SOAP::SOAPString.new('Server'),
+                                                    SOAP::SOAPString.new('Generic error ...'))))
+        lambda { @roc.filtered_events(@filter_hash, 'and', 'true')}.should raise_exception(RegonlineConnector::RegonlineServerError)
+      end
+
+    end
+    
     it "should raise regonline server error when retrieving event fields data" do
       mock_getEventFields = mock('getEventFields')
       mock_getEventFields.should_receive(:RetrieveEventFields2).and_raise(SOAP::FaultError.new(
