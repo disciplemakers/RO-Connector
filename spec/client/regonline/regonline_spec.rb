@@ -1,6 +1,6 @@
 require File.expand_path(File.dirname(__FILE__) + '/../../spec_helper')
 
-describe "RetrieveAllRegistrations" do
+describe "RegOnline" do
   describe "without credentials" do
     it "shouldn't instantiate" do
       lambda { roc_regonline = RegonlineConnector::Client::RegOnline.new }.should raise_exception(ArgumentError)
@@ -115,10 +115,21 @@ describe "RetrieveAllRegistrations" do
   
   describe "with invalid credentials" do
     before(:each) do
-      @xml = "The credentials you supplied are not valid."
-
+      @xml = "Error 4458: unable to process request."
       mock_MappingObject = mock('SOAPMappingObject')
       mock_MappingObject.stub(:getReportResult).and_return(@xml)
+      
+      @empty_zip = "UEsDBC0AAAAIAD1hRz6ioznn//////////8EABQAZGF0YQEAEAAeAAAAA" +
+                   "AAAACUAAAAAAAAADcWxDQAQEADAG8UGFhBD2EAholF4+4drrmiGaQnX0e" +
+                   "1/SLLqAVBLAQItAC0AAAAIAD1hRz6ioznn//////////8EABQAAAAAAAA" +
+                   "AAAAAAAAAAABkYXRhAQAQAB4AAAAAAAAAJQAAAAAAAABQSwUGAAAAAAEA" +
+                   "AQBGAAAAWwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA" +
+                   "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=="
+      @empty_xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?><string " +
+                   "xmlns=\"http://www.regonline.com/webservices/\">" +
+                   "<Registrants /></string>"
+      mock_MappingObjectEmpty = mock('SOAPMappingObject')
+      mock_MappingObjectEmpty.stub(:getReportResult).and_return(@empty_zip)
       
       mock_WSDLDriverFactory = mock('SOAPWSDLDriverFactory')
       mock_RPCDriver = mock('SOAPRPCDriver')
@@ -131,9 +142,7 @@ describe "RetrieveAllRegistrations" do
                                      "startDate"  => '1/1/2010',
                                      "endDate"    => '12/31/2010',
                                      "bAddDate"   => 'true'}
-                                     ).and_raise(SOAP::FaultError.new(
-                                          SOAP::SOAPFault.new(SOAP::SOAPString.new('Server'),
-                                                              SOAP::SOAPString.new('Authentication failure'))))
+                                     ).and_return(mock_MappingObject)
       mock_RPCDriver.stub(:getReport).with(
                                     {"login"      => 'joeuser',
                                      "pass"       => 'bad_password',
@@ -143,14 +152,14 @@ describe "RetrieveAllRegistrations" do
                                      "startDate"  => '1/1/2010',
                                      "endDate"    => '12/31/2010',
                                      "bAddDate"   => 'true'}
-                                     ).and_return(mock_MappingObject)
+                                     ).and_return(mock_MappingObjectEmpty)
       mock_WSDLDriverFactory.should_receive(:create_rpc_driver).and_return(mock_RPCDriver)
       SOAP::WSDLDriverFactory.should_receive(:new).with(
               'http://www.regonline.com/activereports/RegOnline.asmx?WSDL'
               ).and_return(mock_WSDLDriverFactory)
     end
     
-    pending "should still return xml invalid credentials message with bad password" do 
+    pending "should still return xml unable to process request message with bad password" do 
       roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'bad_password', 10000, 1000, '1/1/2010',
                                                           '12/31/2010', 'true')
       lambda { roc_ro.getReport }.should == @xml
