@@ -342,17 +342,18 @@ describe "RegonlineConnector" do
     end
     
     it "should raise authentiation error when retrieving custom report data" do
-      mock_Client = mock('Client')
-      mock_Client.should_receive(:authenticate).with(no_args()).and_return(false)
       mock_RegOnline = mock('RegOnline')
       mock_RegOnline.should_receive(:getReport).with(no_args()).and_return("Error 4458: unable to process request.")
-      mock_Client.should_receive(:regOnline).with(100000, 1000, '01/01/2010',
-                                                  '12/31/2010', 'true').and_return(mock_RegOnline)
-      RegonlineConnector::Client.should_receive(:new).with(100, 'joeuser', 'bad_password').and_return(mock_Client)
+      RegonlineConnector::Client::RegOnline.should_receive(:new).with(100, 'joeuser', 'bad_password',
+                                                                      100000, 1000, '01/01/2010',
+                                                                      '12/31/2010', 'true').and_return(mock_RegOnline)
+      mock_getEvents = mock('getEvents')
+      mock_getEvents.should_receive(:Authenticate).with(no_args()).and_return(false)
+      RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'bad_password').and_return(mock_getEvents)
       
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
-      lambda { roc.report(100000, 1000, '01/01/2010', '12/31/2010',
-                          'true') }.should raise_exception(RegonlineConnector::AuthenticationError) 
+      lambda { roc.report(100000, 1000, '01/01/2010', '12/31/2010', 'true')
+                  }.should raise_exception(RegonlineConnector::AuthenticationError) 
     end
     
   end

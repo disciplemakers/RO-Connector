@@ -137,7 +137,6 @@ class RegonlineConnector
       raise ArgumentError, "start time must be before end time cannot be in future"
     end
     
-    
     registrations = @client.regOnline(report_id, event_id, start_date, end_date, add_date).getReport
     if registrations.include?("Error 4458") && @client.authenticate == false
       raise RegonlineConnector::AuthenticationError
