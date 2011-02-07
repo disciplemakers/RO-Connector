@@ -59,6 +59,15 @@ describe "Parser" do
       @sreg_hash = {}
       @reg_xml = "<string></string>"
       @reg_hash = {}
+      @rep_xml_one_element = "<Registrants />"
+      @rep_xml_many_elements = "<Registrants>\n  <Table1 />\n  " +
+                                     "<Table1 />\n  <Table1 />\n  " +
+                                     "<Table1 />\n  <Table1 />\n  " +
+                                     "<Table1 />\n  <Table1 />\n  " +
+                                     "<Table1 />\n  <Table1 />\n  " +
+                                     "<Table1 />\n  <Table1 />\n" +
+                                     "</Registrants>"
+      @rep_hash = {}
     end
 
     it "events parser should return empty hash" do
@@ -72,6 +81,14 @@ describe "Parser" do
     it "registration parser should return empty hash" do
       @parser.parse_registrations(@reg_xml).should == @reg_hash
     end
+    
+    it "report parser should return empty hash with only one element" do
+      @parser.parse_report(@rep_xml_one_element).should == @rep_hash
+    end
+    
+    it "report parser should return empty hash with many elements" do
+      @parser.parse_report(@rep_xml_many_elements).should == @rep_hash
+    end
   end
   
   describe "with no data" do
@@ -83,6 +100,8 @@ describe "Parser" do
       @sreg_hash = nil
       @reg_xml = nil
       @reg_hash = nil
+      @rep_xml = nil
+      @rep_hash = nil
     end
 
     it "events parser should return nil" do
@@ -95,6 +114,10 @@ describe "Parser" do
     
     it "registration parser should return nil" do
       @parser.parse_registrations(@reg_xml).should == @reg_hash
+    end
+    
+    it "report parser should return nil" do
+      @parser.parse_report(@rep_xml).should == @rep_hash
     end
   end
 end
