@@ -37,13 +37,9 @@ describe "RegonlineConnector" do
       lambda { @roc.password='password' }.should raise_exception(NoMethodError)
     end
     
-    describe "namespace holders should raise not implemented error" do
+    describe "namespace holders should raise not implemented error: " do
       it "update_registrations does not" do
         lambda { @roc.update_registrations }.should raise_exception(NotImplementedError)
-      end
-      
-      pending "report does not" do
-        lambda { @roc.report }.should raise_exception(NotImplementedError)
       end
 
       it "check_in does not" do
@@ -218,6 +214,27 @@ describe "RegonlineConnector" do
         @mock_retrieveSingleRegistration.stub(:RetrieveSingleRegistration).with(no_args()).and_return("response")
         @mock_parser.should_receive(:parse_registrations).with("response").and_return("response-parsed")
         @roc.registration(1000, 10000).should == "response-parsed"
+      end
+    end
+    
+    describe "report" do
+      before(:each) do
+        @mock_RegOnline = mock('RegOnline')
+        @mock_client.should_receive(:regOnline).with(100000, 1000, '01/01/2010',
+                                                     '12/31/2010',
+                                                     'true').and_return(@mock_RegOnline)
+      end
+      
+      it "should call the client method" do
+        @mock_RegOnline.should_receive(:getReport).with(no_args()).and_return("response")
+        @mock_parser.stub(:parse_report).with("response").and_return("response-parsed")
+        @roc.report(100000, 1000, '01/01/2010', '12/31/2010', 'true').should == "response-parsed"
+      end
+        
+      it "should call the parser" do
+        @mock_RegOnline.stub(:getReport).with(no_args()).and_return("response")
+        @mock_parser.should_receive(:parse_report).with("response").and_return("response-parsed")
+        @roc.report(100000, 1000, '01/01/2010', '12/31/2010', 'true').should == "response-parsed"
       end
     end
   end

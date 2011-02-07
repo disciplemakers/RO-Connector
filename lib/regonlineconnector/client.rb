@@ -61,6 +61,13 @@ class RegonlineConnector
                                                                      @password)
     end
     
+    def regOnline(report_id, event_id, start_date, end_date, add_date)
+      report_registrations = 
+          RegonlineConnector::Client::RegOnline.new(@account_id, @username, @password,
+                                                    report_id, event_id, start_date,
+                                                    end_date, add_date)
+    end
+    
     private
     
     def self.zip_to_xml(response)

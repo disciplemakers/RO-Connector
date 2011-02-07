@@ -122,7 +122,11 @@ class RegonlineConnector
   # Returns hashed data from RegOnline's RegOnline.getReport
   # method. Not yet implemented.
   def report(report_id, event_id, start_date, end_date, add_date)
-    raise NotImplementedError
+    registrations = @client.regOnline(report_id, event_id, start_date, end_date, add_date).getReport
+    if registrations.include?("Error 4458")
+          raise RegonlineConnector::AuthenticationError
+    end
+    @parser.parse_report(registrations)
   end
   
   # Updates regonline registrations from an XML file using the
