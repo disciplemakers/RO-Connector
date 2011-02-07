@@ -268,12 +268,9 @@ describe "RegonlineConnector" do
     end
     
     it "should raise authentication error when getting a single event" do
-      # Create a mock GetEvents object (this is the object that wraps
-      # RegOnline's getEvents.asmx service).
       mock_getEvents = mock('getEvents')
       mock_getEvents.should_receive(:ByAccountIDEventID).with(1000).and_return("The credentials you supplied are not valid.")
       
-      # Instantiate our mock GetEvents object instead of a real one.
       RegonlineConnector::Client::GetEvents.should_receive(:new).with(100, 'joeuser', 'bad_password').and_return(mock_getEvents)
       
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
@@ -342,6 +339,20 @@ describe "RegonlineConnector" do
       
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
       lambda { roc.registration(1000,10000) }.should raise_exception(RegonlineConnector::AuthenticationError)
+    end
+    
+    it "should raise authentiation error when retrieving custom report data" do
+      mock_Client = mock('Client')
+      mock_Client.should_receive(:authenticate).with(no_args()).and_return(false)
+      mock_RegOnline = mock('RegOnline')
+      mock_RegOnline.should_receive(:getReport).with(no_args()).and_return("Error 4458: unable to process request.")
+      mock_Client.should_receive(:regOnline).with(100000, 1000, '01/01/2010',
+                                                  '12/31/2010', 'true').and_return(mock_RegOnline)
+      RegonlineConnector::Client.should_receive(:new).with(100, 'joeuser', 'bad_password').and_return(mock_Client)
+      
+      roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
+      lambda { roc.report(100000, 1000, '01/01/2010', '12/31/2010',
+                          'true') }.should raise_exception(RegonlineConnector::AuthenticationError) 
     end
     
   end
@@ -436,5 +447,47 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'password')
       lambda { roc.registration(1000,10000) }.should raise_exception(RegonlineConnector::RegonlineServerError)
     end
+    
+    describe "when retrieving custom report data" do
+      before(:each) do
+        @mock_Client = mock('Client')
+        RegonlineConnector::Client.should_receive(:new).with(100, 'joeuser', 'password').and_return(@mock_Client)
+        @roc = RegonlineConnector.new(100, 'joeuser', 'password')
+      end
+      
+      it "should raise argument error when start date is in future" do
+        lambda { @roc.report(100000, 1000, '01/01/2099',
+                             '12/31/2010',
+                             'true')}.should raise_exception(ArgumentError)
+      end
+      it "should raise argument error when end date is in future" do
+        lambda { @roc.report(100000, 1000, '01/01/2010',
+                             '12/31/2099',
+                             'true')}.should raise_exception(ArgumentError)        
+      end
+      it "should raise argument error if end date is before start date" do
+        lambda { @roc.report(100000, 1000, '01/01/2010',
+                             '12/31/1999',
+                             'true')}.should raise_exception(ArgumentError)  
+      end
+      
+      it "should raise argument error if add_date is not 'true' or 'false'" do
+        lambda { @roc.report(100000, 1000, '01/01/2010',
+                             '12/31/2010',
+                             'not_true_or_false')}.should raise_exception(ArgumentError)
+      end
+
+
+      it "should return empty hash with bad event id" do
+        response = "Error 4458: unable to process request."
+        @mock_Client.should_receive(:authenticate).with(no_args()).and_return(true)
+        mock_RegOnline = mock('RegOnline')
+        mock_RegOnline.should_receive(:getReport).with(no_args()).and_return(response)
+        @mock_Client.should_receive(:regOnline).with(100000, 9999, '01/01/2010',
+                                                    '12/31/2010', 'true').and_return(mock_RegOnline)
+        @roc.report(100000, 9999, '01/01/2010', '12/31/2010', 'true').should == {}
+      end
+    end
+    
   end
 end

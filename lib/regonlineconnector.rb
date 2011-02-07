@@ -122,9 +122,25 @@ class RegonlineConnector
   # Returns hashed data from RegOnline's RegOnline.getReport
   # method. Not yet implemented.
   def report(report_id, event_id, start_date, end_date, add_date)
+    unless add_date == 'true' || add_date == 'false'
+      raise ArgumentError, "add_date argument must be either 'true' or 'false'"
+    end
+    start_t = Date.parse(start_date)
+    end_t = Date.parse(end_date)
+    unless start_t < DateTime.now
+      raise ArgumentError, "start_time argument cannot be in future"
+    end
+    unless end_t < DateTime.now
+      raise ArgumentError, "end_time argument cannot be in future"
+    end
+    unless start_t < end_t
+      raise ArgumentError, "start time must be before end time cannot be in future"
+    end
+    
+    
     registrations = @client.regOnline(report_id, event_id, start_date, end_date, add_date).getReport
-    if registrations.include?("Error 4458")
-          raise RegonlineConnector::AuthenticationError
+    if registrations.include?("Error 4458") && @client.authenticate == false
+      raise RegonlineConnector::AuthenticationError
     end
     @parser.parse_report(registrations)
   end
