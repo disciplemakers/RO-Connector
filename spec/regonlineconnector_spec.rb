@@ -69,7 +69,7 @@ describe "RegonlineConnector" do
   end
     
   describe "with valid credentials" do
-    describe "and valid selection criteria"
+    describe "and valid selection criteria" do
       before(:each) do
         @mock_parser = mock('Parser')
         @mock_client = mock('Client')
@@ -240,7 +240,7 @@ describe "RegonlineConnector" do
       end
     end
     
-    describe "invalid selection criteria" do
+    describe "but invalid selection criteria" do
       describe "when retrieving filtered event data" do
         before(:each) do
           @filter_hash = { 'StatusId' => 1, 'Type_Id' => '1'}
@@ -490,7 +490,5 @@ describe "RegonlineConnector" do
       lambda { roc.report(100000, 1000, '01/01/2010', '12/31/2010', 'true')
                   }.should raise_exception(RegonlineConnector::AuthenticationError) 
     end
-    
   end
-  
 end
