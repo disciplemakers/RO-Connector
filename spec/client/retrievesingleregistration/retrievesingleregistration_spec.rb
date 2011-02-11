@@ -112,5 +112,4 @@ describe "RetrieveSingleRegistration" do
       lambda { roc_rsr.RetrieveSingleRegistration }.should raise_exception(SOAP::FaultError)
     end
   end
-  
 end

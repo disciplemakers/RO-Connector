@@ -102,5 +102,4 @@ describe "GetEventRegistrations" do
       lambda { roc_ger.RetrieveRegistrationInfo }.should raise_exception(SOAP::FaultError)
     end
   end
-  
 end

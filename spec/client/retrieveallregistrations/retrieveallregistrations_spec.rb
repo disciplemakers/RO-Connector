@@ -101,5 +101,4 @@ describe "RetrieveAllRegistrations" do
       lambda { roc_rar.RetrieveAllRegistrations }.should raise_exception(SOAP::FaultError)
     end
   end
-  
 end

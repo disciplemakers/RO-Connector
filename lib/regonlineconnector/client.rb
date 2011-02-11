@@ -92,6 +92,5 @@ class RegonlineConnector
          
         xml_response
     end
-  end
-    
+  end 
 end

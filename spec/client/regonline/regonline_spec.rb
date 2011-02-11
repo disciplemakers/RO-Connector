@@ -171,5 +171,4 @@ describe "RegOnline" do
       lambda { roc_ro.getReport }.should raise_exception(SOAP::FaultError)
     end
   end
-  
 end

@@ -53,10 +53,7 @@ class RegonlineConnector
                                                          "FilterOperator" => filter_operator,
                                                          "LikeMatching"   => filter_like_matching})                                                    
         response.byAccountIDWithFiltersResult
-      end
-                                          
+      end                                   
     end
-  
   end
-
 end  

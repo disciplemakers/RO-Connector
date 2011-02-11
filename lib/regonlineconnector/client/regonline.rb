@@ -35,9 +35,6 @@ class RegonlineConnector
         registrations = RegonlineConnector::Client::zip_to_xml(
             response.getReportResult)
       end
-      
     end
-  
   end
-  
 end

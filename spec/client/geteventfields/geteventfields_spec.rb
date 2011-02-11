@@ -117,5 +117,4 @@ describe "GetEventFields" do
       lambda { roc_gef.RetrieveEventFields2 }.should raise_exception(SOAP::FaultError)
     end
   end
-  
 end

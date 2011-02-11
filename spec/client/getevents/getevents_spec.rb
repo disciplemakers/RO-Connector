@@ -157,5 +157,4 @@ describe "GetEvents" do
       @roc_ge.Authenticate.should be_false
     end
   end
-  
 end

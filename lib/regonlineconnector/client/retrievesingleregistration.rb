@@ -27,10 +27,7 @@ class RegonlineConnector
                                                
         registration = RegonlineConnector::Client::zip_to_xml(
             response.retrieveSingleRegistrationResult)
-      end
-                                             
+      end                                      
     end
-  
   end
-  
 end

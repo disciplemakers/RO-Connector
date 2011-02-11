@@ -80,7 +80,5 @@ class RegonlineConnector
        end
        entries
      end
-     
   end
-
 end

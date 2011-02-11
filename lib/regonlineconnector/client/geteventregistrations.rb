@@ -23,10 +23,7 @@ class RegonlineConnector
                                                "password" => @password,
                                                "eventID"  => @event_id})
         response.retrieveRegistrationInfoResult
-      end
-                                             
+      end                                      
     end
-  
   end
-  
 end
