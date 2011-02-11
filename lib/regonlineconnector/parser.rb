@@ -7,22 +7,22 @@ class RegonlineConnector
      
      end
      
-     # Returns hash of event hashes
+     # Returns hash of event hashes from events xml.
      def parse_events(response)
        events = elements_to_hash(response, "//Table", "ID")
      end
      
-     # Returns hash of registration hashes 
+     # Returns hash of registration hashes from registrations xml.
      def parse_registrations(response)
        registration = elements_to_hash(response, "//Registration", "registrationID")
      end
      
-     # Returns hash of registration hashes 
+     # Returns hash of registration hashes from simple registrations xml.
      def parse_simple_registrations(response)
        registrations = attributes_to_hash(response, "//registration", "id")
      end
 
-     # Returns hash of registration hashes from a report
+     # Returns hash of registration hashes from a report from report xml.
      def parse_report(response)
        response_no_escape = response.to_s.gsub!(/_x0020_/,'')
        events = elements_to_hash(response, "//Table1", "ConfirmationNumber")
