@@ -4,6 +4,9 @@ class RegonlineConnector
   
   class Client
   
+    # This class provides RegOnline's 
+    # RegOnline.asmx[http://www.regonline.com/activereports/RegOnline.asmx]
+    # service.
     class RegOnline
 
       def initialize(account_id, username, password, report_id, event_id, start_date, end_date, add_date)

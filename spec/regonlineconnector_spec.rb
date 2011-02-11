@@ -43,27 +43,27 @@ describe "RegonlineConnector" do
       end
 
       it "check_in does not" do
-        lambda { @roc.check_in }.should raise_exception(NotImplementedError)
+        lambda { @roc.check_in(1,2) }.should raise_exception(NotImplementedError)
       end
       
       it "assign_dna does not" do
-        lambda { @roc.assign_dna }.should raise_exception(NotImplementedError)
+        lambda { @roc.assign_dna(1,2,3,4) }.should raise_exception(NotImplementedError)
       end
       
       it "assign_seat does not" do
-        lambda { @roc.assign_seat }.should raise_exception(NotImplementedError)
+        lambda { @roc.assign_seat(1,2,3,4,5,6,7,8) }.should raise_exception(NotImplementedError)
       end
       
       it "assign_resource_group does not" do
-        lambda { @roc.assign_resource_group }.should raise_exception(NotImplementedError)
+        lambda { @roc.assign_resource_group(1,2) }.should raise_exception(NotImplementedError)
       end
       
       it "assign_room_sharer does not" do
-        lambda { @roc.assign_room_sharer }.should raise_exception(NotImplementedError)
+        lambda { @roc.assign_room_sharer(1,2) }.should raise_exception(NotImplementedError)
       end
       
       it "set_custom_field_response_status does not" do
-        lambda { @roc.set_custom_field_response_status }.should raise_exception(NotImplementedError)
+        lambda { @roc.set_custom_field_response_status(1,2,3) }.should raise_exception(NotImplementedError)
       end
     end
   end

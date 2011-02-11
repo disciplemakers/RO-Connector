@@ -2,7 +2,38 @@ require 'regonlineconnector/client'
 require 'regonlineconnector/parser'
 require 'regonlineconnector/error'
 
-# Class providing a gateway to other classes that connect to RegOnline.
+# = regonlineconnector.rb - Regonline API Interface Library
+# 
+# Copyright (c) 2011 Adam Focht and Brian Roberg
+#
+# RegonlineConnector provides a ruby interface to the RegOnline Web
+# API[http://forums.regonline.com/forums/thread/1383.aspx].
+#
+# This class provides ruby-friendly method names that return 
+# parsed RegOnline provided via hashes of hashes.
+#
+# == Example
+#
+# === Authentication
+#
+#  require 'regonlineconnector'
+#  
+#  roc = RegonlineConnector.new(123456, 'joeuser', 'password')
+#  
+#  if !roc.authenticate
+#    puts "Invalid Credentials"
+#  end
+#
+# === Getting All Events
+# 
+#  require 'regonlineconnector'
+#  require 'pp'
+#  
+#  roc = RegonlineConnector.new(123456, 'joeuser', 'password')
+#  
+#  events = roc.events(654321)
+#  pp events
+#
 class RegonlineConnector
   def initialize(account_id, username, password)
     @client  = RegonlineConnector::Client.new(account_id, username, password)
@@ -34,7 +65,7 @@ class RegonlineConnector
   end
   
   # Returns hashed data from RegOnline's getEvents.byAccountIDWithFilters
-  # method. Not yet implemented.
+  # method.
   def filtered_events(filter_hash, filter_operator, filter_like_matching)
     unless filter_like_matching == 'true' || filter_like_matching == 'false'
       raise ArgumentError, "filter_like_matching argument must be either 'true' or 'false'"
@@ -66,7 +97,7 @@ class RegonlineConnector
   end
   
   # Returns hashed data from RegOnline's geteventfields.RetrieveEventFields2
-  # method. Not yet implemented.
+  # method.
   def event_fields(event_id, exclude_amounts="false")
     begin
       @parser.parse_events(@client.getEventFields(event_id, exclude_amounts).RetrieveEventFields2)
@@ -120,7 +151,7 @@ class RegonlineConnector
   end
   
   # Returns hashed data from RegOnline's RegOnline.getReport
-  # method. Not yet implemented.
+  # method.
   def report(report_id, event_id, start_date, end_date, add_date)
     unless add_date == 'true' || add_date == 'false'
       raise ArgumentError, "add_date argument must be either 'true' or 'false'"
@@ -145,7 +176,7 @@ class RegonlineConnector
   end
   
   # Updates regonline registrations from an XML file using the
-  # RegistrationUpdateService.UpdateRegistrations method. Not yet implemented.
+  # RegistrationUpdateService.UpdateRegistrations method. <b><em>Not yet implemented.</em></b>
   def update_registrations
     raise NotImplementedError
   end
@@ -159,40 +190,40 @@ class RegonlineConnector
   #++
   
   # Uses the checkinreg.CheckIn method to check an attendee in.
-  # Not implemented. 
-  def check_in #(registration_id, event_id)
+  # <b><em>Not implemented.</em></b> 
+  def check_in(registration_id, event_id)
     raise NotImplementedError
   end
   
   # Uses the customfieldresponse.modify method to assign a dna code to an 
-  # attendee. Not implemented.
-  def assign_dna #(registration_id, event_id, custom_field_id, dna_code)
+  # attendee. <b><em>Not implemented.</em></b>
+  def assign_dna(registration_id, event_id, custom_field_id, dna_code)
     raise NotImplementedError
   end
   
   # Uses the customfieldresponse.AssignSeat method to assign a seat for an
-  # attendee. Not implemented.
-  def assign_seat #(registration_id, event_id, custom_field_id, level_id,
-                  #section_id, row_id, seat_id, block_code)
+  # attendee. <b><em>Not implemented.</em></b>
+  def assign_seat(registration_id, event_id, custom_field_id, level_id,
+                  section_id, row_id, seat_id, block_code)
     raise NotImplementedError
   end
   
   # Uses the registrationWS.Modify method to assign a resource group to an 
-  # attendee. Not implemented.
-  def assign_resource_group #(registration_id, resource_group_id)
+  # attendee. <b><em>Not implemented.</em></b>
+  def assign_resource_group(registration_id, resource_group_id)
     raise NotImplementedError
   end
   
   # Uses the registrationWS.assignRoomSharerID method to assign a room sharer
-  # to an attendee.  Not implemented.
-  def assign_room_sharer #(registration_id, room_sharer_id)
+  # to an attendee.  <b><em>Not implemented.</em></b>
+  def assign_room_sharer(registration_id, room_sharer_id)
     raise NotImplementedError
   end
   
   # Uses the SetCustomFieldResponseStatus.setStatus method to set an attendee's
-  # custom field response status. Not implemented.
-  def set_custom_field_response_status #(registration_id, custom_field_id,
-                                       #status_id)
+  # custom field response status. <b><em>Not implemented.</em></b>
+  def set_custom_field_response_status(registration_id, custom_field_id,
+                                       status_id)
     raise NotImplementedError
   end
 end

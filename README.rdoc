@@ -1,6 +1,7 @@
 = regonlineconnector
 
-Description goes here.
+RegonlineConnector provides a ruby interface to the RegOnline Web
+API[http://forums.regonline.com/forums/thread/1383.aspx].
 
 == Contributing to regonlineconnector
  

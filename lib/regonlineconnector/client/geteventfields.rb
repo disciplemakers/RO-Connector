@@ -4,6 +4,9 @@ class RegonlineConnector
 
   class Client  
 
+    # This class provides RegOnline's 
+    # getEventFields.asmx[http://www.regonline.com/webservices/geteventFields.asmx]
+    # service.
     class GetEventFields
 
       def initialize(event_id, username, password, exclude_amounts)
