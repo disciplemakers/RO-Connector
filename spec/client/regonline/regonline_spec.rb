@@ -135,7 +135,7 @@ describe "RegOnline" do
       mock_RPCDriver = mock('SOAPRPCDriver')
       mock_RPCDriver.stub(:getReport).with(
                                     {"login"      => 'joeuser',
-                                     "pass"       => 'password',
+                                     "pass"       => 'bad_password',
                                      "eventID"    => 1000,
                                      "reportID"   => 10000,
                                      "customerID" => 100,
@@ -145,9 +145,9 @@ describe "RegOnline" do
                                      ).and_return(mock_MappingObject)
       mock_RPCDriver.stub(:getReport).with(
                                     {"login"      => 'joeuser',
-                                     "pass"       => 'bad_password',
+                                     "pass"       => 'password',
                                      "eventID"    => 1000,
-                                     "reportID"   => 10000,
+                                     "reportID"   => 99999,
                                      "customerID" => 100,
                                      "startDate"  => '1/1/2010',
                                      "endDate"    => '12/31/2010',
@@ -159,16 +159,17 @@ describe "RegOnline" do
               ).and_return(mock_WSDLDriverFactory)
     end
     
-    pending "should still return xml unable to process request message with bad password" do 
+    it "should still return xml unable to process request message with bad password" do 
       roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'bad_password', 10000, 1000, '1/1/2010',
                                                           '12/31/2010', 'true')
-      lambda { roc_ro.getReport }.should == @xml
+      roc_ro.getReport.should == @xml
     end
     
-    pending "should raise a SOAP fault error with bad search criteria" do
-      roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'password', 10000, 1000, '1/1/2010',
-                                                          '12/31/2010', 'true') 
-      lambda { roc_ro.getReport }.should raise_exception(SOAP::FaultError)
+    it "should still return empty xml when empty zip returned (bad search criteria)" do
+      RegonlineConnector::Client.should_receive(:zip_to_xml).with(@empty_zip).and_return(@empty_xml)
+      roc_ro = RegonlineConnector::Client::RegOnline.new(100, 'joeuser', 'password', 99999, 1000, '1/1/2010',
+                                                          '12/31/2010', 'true')
+      roc_ro.getReport.should == @empty_xml
     end
   end
 end

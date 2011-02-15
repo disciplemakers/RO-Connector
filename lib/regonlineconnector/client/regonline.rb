@@ -31,9 +31,14 @@ class RegonlineConnector
                                              "startDate"  => @start_date,
                                              "endDate"    => @end_date,
                                              "bAddDate"   => @add_date})
-                                               
-        registrations = RegonlineConnector::Client::zip_to_xml(
-            response.getReportResult)
+
+        if response.getReportResult == 'Error 4458: unable to process request.'
+          return response.getReportResult
+        else
+          return registrations = RegonlineConnector::Client::zip_to_xml(
+                                    response.getReportResult)
+        end
+        
       end
     end
   end
