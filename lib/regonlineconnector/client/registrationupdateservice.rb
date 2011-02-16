@@ -6,7 +6,7 @@ class RegonlineConnector
   class Client
   
     # This class provides RegOnline's 
-    # getEvents.asmx[https://www.regonline.com/webservices/getEvents.asmx]
+    # RegistrationUpdateService.asmx[https://www.regonline.com/webservices/RegistrationUpdateService.asmx]
     # service.
     class RegistrationUpdateService
       def initialize( account_id, username, password )
@@ -17,7 +17,13 @@ class RegonlineConnector
         @registration_updater = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
       end
       
-      
+      def UpdateRegistrations(updates)
+        response = @registration_updater.UpdateRegistrations(
+                                              {"AccountID" => @account_id,
+                                               "Username"  => @username,
+                                               "Password"  => @password})
+        #response.byAccountIDResult
+      end
     end
   end
 end
