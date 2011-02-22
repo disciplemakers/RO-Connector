@@ -64,10 +64,15 @@ class RegonlineConnector
     end
     
     def regOnline(report_id, event_id, start_date, end_date, add_date)
-      report_registrations = 
+      report_service = 
           RegonlineConnector::Client::RegOnline.new(@account_id, @username, @password,
                                                     report_id, event_id, start_date,
                                                     end_date, add_date)
+    end
+    
+    def updateRegistrationService(event_id, update_data_hash)
+      update_registration_service =
+          RegonlineConnector::Client::UpdateRegistrationService.new(@username, @password)
     end
     
     private
