@@ -38,10 +38,6 @@ describe "RegonlineConnector" do
     end
     
     describe "namespace holders should raise not implemented error: " do
-      it "update_registrations does not" do
-        lambda { @roc.update_registrations }.should raise_exception(NotImplementedError)
-      end
-
       it "check_in does not" do
         lambda { @roc.check_in(1,2) }.should raise_exception(NotImplementedError)
       end
@@ -238,6 +234,31 @@ describe "RegonlineConnector" do
           @roc.report(100000, 1000, '01/01/2010', '12/31/2010', 'true').should == "response-parsed"
         end
       end
+      
+      describe "update registrations" do
+        before(:each) do
+          @event_id = 123456
+          @update_data_hash = { 12345678 => {"custom_fields" => {"Field Name" => "Field Value"}}}
+          @mock_RegistrationUpdateService = mock('RegistrationUpdateService')
+          @mock_RegistrationUpdateService.stub(:generate_request_xml).with(any_args()).and_return("request xml")
+          @mock_client.should_receive(:registrationUpdateService).with(no_args()).and_return(@mock_RegistrationUpdateService)
+        end
+        
+        it "should attempt to retreive data" do
+          @mock_RegistrationUpdateService.should_receive(:UpdateRegistrations).with("request xml").and_return("response")
+          @mock_parser.stub(:parse_updated_registrations).with("response").and_return("response-parsed")
+          @roc.update_registrations(@event_id, @update_data_hash).should == "response-parsed"
+        end
+          
+        it "should attempt to parse data" do
+          @mock_RegistrationUpdateService.stub(:UpdateRegistrations).with("request xml").and_return("response")
+          @mock_parser.should_receive(:parse_updated_registrations).with("response").and_return("response-parsed")
+          @roc.update_registrations(@event_id, @update_data_hash).should == "response-parsed"
+        end
+        
+        it "should be happy when list of updated registration ids match list to be updated"
+        it "should be unhappy when list of updated registration ids does not match list to be updated"
+      end
     end
     
     describe "but invalid selection criteria" do
@@ -371,6 +392,22 @@ describe "RegonlineConnector" do
           @roc.report(100000, 9999, '01/01/2010', '12/31/2010', 'true').should == {}
         end
       end
+
+      it "should raise regonline server error when updating registrations" do
+        event_id = 123
+        update_data_hash = { 12345678 => {
+                                "custom_fields" => {"Field Name" => "Field Value"}
+                            } }
+        mock_RegistrationUpdateService = mock('RegistrationUpdateService')
+        mock_RegistrationUpdateService.should_receive(:UpdateRegistrations).with(any_args()).and_raise(SOAP::FaultError.new(
+                                            SOAP::SOAPFault.new(SOAP::SOAPString.new('Server'),
+                                                                SOAP::SOAPString.new('Object reference not set to an instance of an object.'))))
+        mock_RegistrationUpdateService.should_receive(:generate_request_xml).with(event_id, update_data_hash).and_return("response")
+        RegonlineConnector::Client::RegistrationUpdateService.should_receive(:new).with(any_args()).and_return(mock_RegistrationUpdateService)
+        
+        roc = RegonlineConnector.new(100, 'joeuser', 'password')
+        lambda { roc.update_registrations(event_id, update_data_hash) }.should raise_exception(RegonlineConnector::RegonlineServerError)
+      end
     end
   end
     
@@ -489,6 +526,22 @@ describe "RegonlineConnector" do
       roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
       lambda { roc.report(100000, 1000, '01/01/2010', '12/31/2010', 'true')
                   }.should raise_exception(RegonlineConnector::AuthenticationError) 
+    end
+    
+    it "should raise authentication error when updating registrant data" do
+      event_id = 123456
+      update_data_hash = { 12345678 => {
+                              "custom_fields" => {"Field Name" => "Field Value"}
+                          } }
+      mock_RegistrationUpdateService = mock('RegistrationUpdateService')
+      mock_RegistrationUpdateService.should_receive(:UpdateRegistrations).with(any_args()).and_raise(SOAP::FaultError.new(
+                                          SOAP::SOAPFault.new(SOAP::SOAPString.new('Server'),
+                                                              SOAP::SOAPString.new('Authentication failure'))))
+      mock_RegistrationUpdateService.should_receive(:generate_request_xml).with(event_id, update_data_hash).and_return("response")
+      RegonlineConnector::Client::RegistrationUpdateService.should_receive(:new).with(any_args()).and_return(mock_RegistrationUpdateService)
+      
+      roc = RegonlineConnector.new(100, 'joeuser', 'bad_password')
+      lambda { roc.update_registrations(event_id, update_data_hash) }.should raise_exception(RegonlineConnector::AuthenticationError)
     end
   end
 end

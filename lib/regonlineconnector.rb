@@ -177,8 +177,21 @@ class RegonlineConnector
   
   # Updates regonline registrations from an XML file using the
   # RegistrationUpdateService.UpdateRegistrations method. <b><em>Not yet implemented.</em></b>
-  def update_registrations
-    raise NotImplementedError
+  def update_registrations(event_id, update_data_hash)
+    registration_updater = @client.registrationUpdateService
+    request_xml = registration_updater.generate_request_xml(event_id, update_data_hash)
+    
+    begin
+      response_xml = registration_updater.UpdateRegistrations(request_xml)
+    rescue SOAP::FaultError => exception
+      if exception.to_s.include?("Authentication failure")
+        raise RegonlineConnector::AuthenticationError
+      else
+        raise RegonlineConnector::RegonlineServerError
+      end
+    end
+    
+    @parser.parse_updated_registrations(response_xml)
   end
   
   
