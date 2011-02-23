@@ -5,6 +5,7 @@ require 'regonlineconnector/client/registrationupdateservice'
 require 'regonlineconnector/client/regonline'
 require 'regonlineconnector/client/retrieveallregistrations'
 require 'regonlineconnector/client/retrievesingleregistration'
+require 'regonlineconnector/client/registrationupdateservice'
 require 'base64'
 require 'md5'
 require 'rubygems'
@@ -70,9 +71,9 @@ class RegonlineConnector
                                                     end_date, add_date)
     end
     
-    def updateRegistrationService(event_id, update_data_hash)
-      update_registration_service =
-          RegonlineConnector::Client::UpdateRegistrationService.new(@username, @password)
+    def registrationUpdateService
+      registration_update_service =
+          RegonlineConnector::Client::RegistrationUpdateService.new(@username, @password)
     end
     
     private
