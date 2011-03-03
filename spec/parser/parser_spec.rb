@@ -62,7 +62,7 @@ describe "Parser" do
     
     it "updated registrations parser should return array of updated registration ids" do
       @parser.parse_updated_registrations(@updated_registrations_xml).should == @updated_registrations_array
-    end   
+    end
   end
   
   describe "with empty data set" do
@@ -83,6 +83,17 @@ describe "Parser" do
                                      "<Table1 />\n  <Table1 />\n" +
                                      "</Registrants>"
       @rep_hash = {}
+      @updated_registrations_xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                                   "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+                                   "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+                                   "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>" +
+                                   "<UpdateRegistrationsResponse " +
+                                   "xmlns=\"http://www.regonline.com/webservices/2007/08/RegistrationUpdateService\">" +
+                                   "<updateRegistrationsResult " +
+                                   "xmlns=\"http://www.regonline.com/webservices/2007/08/RegistrationUpdateServiceTypes\">" +
+                                   "</updateRegistrationsResult></UpdateRegistrationsResponse>" +
+                                   "</soap:Body></soap:Envelope>"
+      @updated_registrations_array = []
     end
 
     it "events parser should return empty hash" do
@@ -104,6 +115,10 @@ describe "Parser" do
     it "report parser should return empty hash with many elements" do
       @parser.parse_report(@rep_xml_many_elements).should == @rep_hash
     end
+    
+    it "updated registrations parser should return empty array" do
+      @parser.parse_updated_registrations(@updated_registrations_xml).should == @updated_registrations_array
+    end
   end
   
   describe "with no data" do
@@ -117,6 +132,8 @@ describe "Parser" do
       @reg_hash = nil
       @rep_xml = nil
       @rep_hash = nil
+      @updated_registrations_xml = nil
+      @updated_registrations_array = nil
     end
 
     it "events parser should return nil" do
@@ -133,6 +150,10 @@ describe "Parser" do
     
     it "report parser should return nil" do
       @parser.parse_report(@rep_xml).should == @rep_hash
+    end
+    
+    it "updated registrations parser should return empty array" do
+      @parser.parse_updated_registrations(@updated_registrations_xml).should == @updated_registrations_array
     end
   end
 end

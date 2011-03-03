@@ -30,11 +30,15 @@ class RegonlineConnector
      end
      
      def parse_updated_registrations(response)
+       unless response
+         return nil
+       end
        doc = REXML::Document.new response
        updated_registrations = []
-       updated_registrations_string = XPath.first( doc, "//updateRegistrationsResult").text.split(',')
-       updated_registrations_string.each do |registration_id|
-         updated_registrations << registration_id.to_i
+       updated_registrations_string = XPath.first( doc, "//updateRegistrationsResult").text
+       if updated_registrations_string
+         updated_registrations_string_array = updated_registrations_string.split(',')
+         updated_registrations_string_array.each {|registration_id| updated_registrations << registration_id.to_i}
        end
        updated_registrations
      end
