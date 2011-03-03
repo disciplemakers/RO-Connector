@@ -17,7 +17,8 @@ class RegonlineConnector
         @wsdl = 'http://www.regonline.com/webservices/getEventFields.asmx?WSDL'
         @field_getter = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
       end
-
+      
+      # Provides access to the RetrieveEventFields2 SOAP operation.
       def RetrieveEventFields2
           response = @field_getter.RetrieveEventFields2(
                                                 {"login"    => @username,

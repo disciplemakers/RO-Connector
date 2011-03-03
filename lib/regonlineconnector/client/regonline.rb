@@ -21,7 +21,8 @@ class RegonlineConnector
         @wsdl       = 'http://www.regonline.com/activereports/RegOnline.asmx?WSDL'
         @report_getter = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
       end
-
+      
+      # Provides access to the getReport SOAP operation.
       def getReport
         response = @report_getter.getReport({"login"      => @username,
                                              "pass"       => @password,

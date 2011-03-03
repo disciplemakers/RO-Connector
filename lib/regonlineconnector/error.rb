@@ -9,6 +9,6 @@ class RegonlineConnector
   # Raised when Regonline server raises other SOAP fault error
   class RegonlineServerError < Error; end
   
-  # Raised when Regonline server raises other SOAP fault error
+  # Raised when Regonline server does not respond as expected
   class ResponseError < Error; end
 end

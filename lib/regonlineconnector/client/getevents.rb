@@ -29,14 +29,16 @@ class RegonlineConnector
           return true
         end
       end
-
+      
+      # Provides access to the ByAccountID SOAP operation.
       def ByAccountID
         response = @event_getter.ByAccountID({"AccountID" => @account_id,
                                                "Username"  => @username,
                                                "Password"  => @password})
         response.byAccountIDResult
       end
-    
+      
+      # Provides access to the ByAccountIDEventID SOAP operation.
       def ByAccountIDEventID(event_id)
         response = @event_getter.ByAccountIDEventID({"AccountID" => @account_id,
                                                       "Username"  => @username,
@@ -44,7 +46,8 @@ class RegonlineConnector
                                                       "EventId"   => event_id})                                                    
         response.byAccountIDEventIDResult
       end
-    
+      
+      # Provides access to the ByAccountIDWithFilters SOAP operation.
       def ByAccountIDWithFilters(filter_xml, filter_operator, filter_like_matching)
         response = @event_getter.ByAccountIDWithFilters({"AccountID"      => @account_id,
                                                          "Username"       => @username,

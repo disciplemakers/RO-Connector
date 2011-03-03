@@ -16,7 +16,8 @@ class RegonlineConnector
         @wsdl = 'http://www.regonline.com/webservices/getEventRegistrations.asmx?WSDL'
         @registrant_getter = SOAP::WSDLDriverFactory.new(@wsdl).create_rpc_driver
       end
-
+      
+      # Provides access to the RetrieveRegistrationInfo SOAP operation.
       def RetrieveRegistrationInfo
         response = @registrant_getter.RetrieveRegistrationInfo(
                                               {"login"    => @username,

@@ -14,6 +14,7 @@ class RegonlineConnector
         @password           = password
       end
       
+      # Provides access to the UpdateRegistrations SOAP operation.
       def UpdateRegistrations(request_xml)
         request = SOAP::StreamHandler::ConnectionData.new(request_xml)
         stream = SOAP::HTTPStreamHandler.new(SOAP::Property.new)
@@ -23,6 +24,18 @@ class RegonlineConnector
                                )
       end
       
+      # Takes event id and hash of update data and returns regonline-friendly xml request xml.
+      #
+      # Example update_data_hash structure:
+      # 
+      #  update_data_hash = {event_id => {
+      #                                     "agenda_items"  => {"Field Name" => "Field Value"}
+      #                                     "custom_fields" => {"Field Name" => "Field Value"}
+      #                                     "fees"          => {"Field Name" => "Field Value"}
+      #                                  }
+      #                     }
+      # 
+      # where all three sub hashes are optional, as long as at least one exists.
       def generate_request_xml(event_id, update_data_hash)
         envelope = SOAP::SOAPEnvelope.new(update_registrations_request_header,
                                           update_registrations_request(event_id, update_data_hash))
@@ -31,6 +44,7 @@ class RegonlineConnector
       
       private
       
+      # Generates request header for updating registrations from stored username and password.
       def update_registrations_request_header
         header = SOAP::SOAPHeader.new
         request_header = SOAP::SOAPElement.new('updateRegistrationsRequestHeader', '')
@@ -41,6 +55,7 @@ class RegonlineConnector
         header
       end
       
+      # Generates request body from passed event id and update data hash.
       def update_registrations_request(event_id, update_data_hash)
         body_item = SOAP::SOAPElement.new('UpdateRegistrationsRequest', nil)
         body_item.extraattr['xmlns'] = 'http://www.regonline.com/webservices/2007/08/RegistrationUpdateService'

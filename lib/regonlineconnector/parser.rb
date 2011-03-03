@@ -29,6 +29,7 @@ class RegonlineConnector
        events = elements_to_hash(response, "//Table1", "ConfirmationNumber")
      end
      
+     # Returns array of updated registration ids from response xml.
      def parse_updated_registrations(response)
        unless response
          return nil
