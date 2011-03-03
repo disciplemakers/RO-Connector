@@ -178,6 +178,20 @@ class RegonlineConnector
   # Updates regonline registrations from an XML file using the
   # RegistrationUpdateService.UpdateRegistrations method. <b><em>Not yet implemented.</em></b>
   def update_registrations(event_id, update_data_hash)
+    unless event_id.kind_of?(Integer)
+      raise ArgumentError, "event_id must be integer"
+    end
+    unless event_id > 0
+      raise ArgumentError, "event_id must be positive integer"
+    end
+    unless update_data_hash.instance_of?(Hash)
+      raise ArgumentError, "update data hash must be hash"
+    end
+    if update_data_hash.empty?
+      raise ArgumentError, "update data hash must not be empty"
+    end
+    
+    registrations_to_be_updated = update_data_hash.keys.sort
     registration_updater = @client.registrationUpdateService
     request_xml = registration_updater.generate_request_xml(event_id, update_data_hash)
     
@@ -191,7 +205,13 @@ class RegonlineConnector
       end
     end
     
-    @parser.parse_updated_registrations(response_xml)
+    updated_registrations = @parser.parse_updated_registrations(response_xml)
+    
+    if registrations_to_be_updated.sort! != updated_registrations.sort!
+      raise RegonlineConnector::ResponseError
+    end
+    
+    updated_registrations
   end
   
   
