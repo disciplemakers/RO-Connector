@@ -34,6 +34,18 @@ describe "Parser" do
                                 "firstName"      => "John",
                                 "suffix"         => nil,
                                 "membershipID"   => nil}}
+      @updated_registrations_xml = "<?xml version=\"1.0\" encoding=\"utf-8\"?>" +
+                                   "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\" " +
+                                   "xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" " +
+                                   "xmlns:xsd=\"http://www.w3.org/2001/XMLSchema\"><soap:Body>" +
+                                   "<UpdateRegistrationsResponse " +
+                                   "xmlns=\"http://www.regonline.com/webservices/2007/08/RegistrationUpdateService\">" +
+                                   "<updateRegistrationsResult " +
+                                   "xmlns=\"http://www.regonline.com/webservices/2007/08/RegistrationUpdateServiceTypes\">" +
+                                   "12345678,87654321,24681012,12108642" +
+                                   "</updateRegistrationsResult></UpdateRegistrationsResponse>" +
+                                   "</soap:Body></soap:Envelope>"
+      @updated_registrations_array = [ 12345678, 87654321, 24681012, 12108642]
     end
     
     it "events parser should return hashed data" do
@@ -47,7 +59,10 @@ describe "Parser" do
     it "registration parser should return hashed data" do
       @parser.parse_registrations(@reg_xml).should == @reg_hash
     end
-       
+    
+    it "updated registrations parser should return array of updated registration ids" do
+      @parser.parse_updated_registrations(@updated_registrations_xml).should == @updated_registrations_array
+    end   
   end
   
   describe "with empty data set" do

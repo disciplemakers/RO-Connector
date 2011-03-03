@@ -1,4 +1,5 @@
 require 'rexml/document'
+include REXML
 
 class RegonlineConnector
     
@@ -26,7 +27,17 @@ class RegonlineConnector
      def parse_report(response)
        response_no_escape = response.to_s.gsub!(/_x0020_/,'')
        events = elements_to_hash(response, "//Table1", "ConfirmationNumber")
-     end     
+     end
+     
+     def parse_updated_registrations(response)
+       doc = REXML::Document.new response
+       updated_registrations = []
+       updated_registrations_string = XPath.first( doc, "//updateRegistrationsResult").text.split(',')
+       updated_registrations_string.each do |registration_id|
+         updated_registrations << registration_id.to_i
+       end
+       updated_registrations
+     end
      
      private
      
