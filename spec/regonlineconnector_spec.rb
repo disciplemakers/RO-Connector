@@ -131,7 +131,6 @@ describe "RegonlineConnector" do
         end
           
         it "should attempt to parse data" do
-        	
           @mock_getEvents.stub(:ByAccountIDWithFilters).with(any_args()).and_return("response")
           @mock_parser.should_receive(:parse_events).with("response").and_return("response-parsed")
           @roc.filtered_events(@filter_hash, 'and', 'true').should == "response-parsed"
