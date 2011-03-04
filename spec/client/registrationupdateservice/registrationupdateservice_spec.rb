@@ -120,13 +120,15 @@ EOF
     it "should return XML when UpdateRegistrationService is called" do
       request = SOAP::StreamHandler::ConnectionData.new(@request_xml)
       SOAP::StreamHandler::ConnectionData.stub(:new).with(@request_xml).and_return(request)
+      mock_response_data = mock('response_data')
+      mock_response_data.stub(:receive_string).with(no_args()).and_return(@resp_xml)
       @mock_http_stream_handler.stub(:send).with(
                       'http://www.regonline.com/webservices/RegistrationUpdateService.asmx',
                       request,
                       "http://www.regonline.com/webservices/2007/08/RegistrationUpdateService/UpdateRegistrations"
-                     ).and_return(@resp_data)
+                     ).and_return(mock_response_data)
       
-      @roc_rus.UpdateRegistrations(@request_xml).should == @resp_data
+      @roc_rus.UpdateRegistrations(@request_xml).should == @resp_xml
     end
     
     it "should raise a SOAP fault error with registrant that doesn't belong to event" do

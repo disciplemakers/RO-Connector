@@ -176,7 +176,7 @@ class RegonlineConnector
   end
   
   # Updates regonline registrations from an XML file using the
-  # RegistrationUpdateService.UpdateRegistrations method. <b><em>Not yet implemented.</em></b>
+  # RegistrationUpdateService.UpdateRegistrations method.
   def update_registrations(event_id, update_data_hash)
     unless event_id.kind_of?(Integer)
       raise ArgumentError, "event_id must be integer"
@@ -206,8 +206,9 @@ class RegonlineConnector
     end
     
     updated_registrations = @parser.parse_updated_registrations(response_xml)
+    updated_registrations.sort!
     
-    if registrations_to_be_updated.sort! != updated_registrations.sort!
+    if registrations_to_be_updated != updated_registrations
       raise RegonlineConnector::ResponseError
     end
     

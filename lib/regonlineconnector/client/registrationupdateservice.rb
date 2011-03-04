@@ -22,17 +22,18 @@ class RegonlineConnector
                                 request,
                                 "http://www.regonline.com/webservices/2007/08/RegistrationUpdateService/UpdateRegistrations"
                                )
+        resp_data.receive_string
       end
       
       # Takes event id and hash of update data and returns regonline-friendly xml request xml.
       #
       # Example update_data_hash structure:
       # 
-      #  update_data_hash = {event_id => {
-      #                                     "agenda_items"  => {"Field Name" => "Field Value"}
-      #                                     "custom_fields" => {"Field Name" => "Field Value"}
-      #                                     "fees"          => {"Field Name" => "Field Value"}
-      #                                  }
+      #  update_data_hash = {registration_id => {
+      #                                           "agenda_items"  => {"Field Name" => "Field Value"}
+      #                                           "custom_fields" => {"Field Name" => "Field Value"}
+      #                                           "fees"          => {"Field Name" => "Field Value"}
+      #                                         }
       #                     }
       # 
       # where all three sub hashes are optional, as long as at least one exists.
