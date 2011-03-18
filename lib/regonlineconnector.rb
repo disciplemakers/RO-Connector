@@ -100,7 +100,7 @@ class RegonlineConnector
   # method.
   def event_fields(event_id, exclude_amounts="false")
     begin
-      @parser.parse_events(@client.getEventFields(event_id, exclude_amounts).RetrieveEventFields2)
+      @parser.parse_event_fields(@client.getEventFields(event_id, exclude_amounts).RetrieveEventFields2)
     rescue SOAP::FaultError => exception
       if exception.to_s.include?("Authentication failure")
         raise RegonlineConnector::AuthenticationError
