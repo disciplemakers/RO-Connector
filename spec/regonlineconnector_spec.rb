@@ -146,13 +146,13 @@ describe "RegonlineConnector" do
         
         it "should attempt to retreive data" do
           @mock_getEventFields.should_receive(:RetrieveEventFields2).with(no_args()).and_return("response")
-          @mock_parser.stub(:parse_events).with("response").and_return("response-parsed")
+          @mock_parser.stub(:parse_event_fields).with("response").and_return("response-parsed")
           @roc.event_fields(1000).should == "response-parsed"
         end
           
         it "should attempt to parse data" do
           @mock_getEventFields.stub(:RetrieveEventFields2).with(no_args()).and_return("response")
-          @mock_parser.should_receive(:parse_events).with("response").and_return("response-parsed")
+          @mock_parser.should_receive(:parse_event_fields).with("response").and_return("response-parsed")
           @roc.event_fields(1000).should == "response-parsed"
         end
       end
