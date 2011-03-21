@@ -13,6 +13,7 @@ class RegonlineConnector
        events = elements_to_hash(response, "//Table", "ID")
      end
      
+     # Returns hash of event fields from event fields xml.
      def parse_event_fields(response)
        event_fields = attributes_to_hash(response, "//customField", "id", "//listItem", "name")
      end
