@@ -14,7 +14,7 @@ class RegonlineConnector
      end
      
      def parse_event_fields(response)
-       event_fields = attributes_to_hash(response, "//customField", "id")
+       event_fields = attributes_to_hash(response, "//customField", "id", "//listItem", "name")
      end
      
      # Returns hash of registration hashes from registrations xml.
@@ -59,7 +59,6 @@ class RegonlineConnector
        entries = Hash.new
        doc.elements.to_a(xpath).each do |xml_element|
          entry = Hash.new
-         
          xml_element.elements.to_a.each do |el|
            if el.text =~ %r{^[0-9]*$} then # Integer value
              entry[el.name] = el.text.to_i
@@ -77,7 +76,7 @@ class RegonlineConnector
      end
      
      # Returns hash from xml attributes
-     def attributes_to_hash(xml_response, xpath, hash_id)
+     def attributes_to_hash(xml_response, xpath, hash_id, children_xpath = nil, child_attribute = nil)
        unless xml_response
          return nil
        end
@@ -96,6 +95,12 @@ class RegonlineConnector
          end
          if entry[hash_id]
            entries[entry[hash_id]] = entry
+         end
+         if children_xpath and xml_element.has_elements?
+           entry['list_items'] = []
+           xml_element.elements.to_a(children_xpath).each do |child_element|
+             entry['list_items'] << child_element.attribute(child_attribute).value if child_attribute
+           end
          end
        end
        entries
