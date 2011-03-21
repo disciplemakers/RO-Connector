@@ -16,6 +16,42 @@ describe "Parser" do
                              "Title"        => "Test Conference",
                              "LocationName" => "Conference Center",
                              "Room"         => nil}}
+      @event_fields_xml = "<fields><fees /><agendaItems /><customFields>" +
+                          "<customField id=\"2420118\" name=\"Special Needs\" />" +
+                          "<customField id=\"2420119\" name=\"School Name\">" +
+                          "<items><listItem name=\"Bloomsburg University\" />" +
+                          "<listItem name=\"Bucknell University\" />" +
+                          "<listItem name=\"East Stroudsburg University\" />" +
+                          "<listItem name=\"Gettysburg College\" />" +
+                          "<listItem name=\"Kutztown University\" />" +
+                          "<listItem name=\"Lafayette College\" />" +
+                          "<listItem name=\"Muhlenberg College\" />" +
+                          "<listItem name=\"Penn State University\" />" +
+                          "<listItem name=\"Shippensburg University\" />" +
+                          "<listItem name=\"Other\" /></items>" +
+                          "</customField>" +
+                          "<customField id=\"2420120\" name=\"Graduation Year\" />" +
+                          "<customField id=\"2420125\" name=\"Housing Assignment\" />" +
+                          "<customField id=\"2420141\" name=\"Small Group Assignment\" />" +
+                          "<customField id=\"2420142\" name=\"Campus Group Room\" />" +
+                          "</customFields></fields>"
+      @event_fields_hash = { 2420118 => {"name" => "Special Needs", "id" => 2420118},
+                             2420119 => {"name" => "School Name",
+                                         "id" => 2420119,
+                                         "list_items" => ["Bloomsburg University",
+                                                          "Bucknell University",
+                                                          "East Stroudsburg University",
+                                                          "Gettysburg College",
+                                                          "Kutztown University",
+                                                          "Lafayette College",
+                                                          "Muhlenberg College",
+                                                          "Penn State University",
+                                                          "Shippensburg University",
+                                                          "Other"]},
+                             2420120 => {"name" => "Graduation Year", "id" => 2420120},
+                             2420125 => {"name" => "Housing Assignment", "id" => 2420125},
+                             2420141 => {"name" => "Small Group Assignment", "id" => 2420141},
+                             2420142 => {"name" => "Campus Group Room", "id" => 2420142}}                                       
       @sreg_xml = "<registrations>" +
                  "<registration id=\"12345678\" firstName=\"John\" lastName=\"Doe\" />" +
                  "</registrations>"
@@ -51,6 +87,10 @@ describe "Parser" do
     it "events parser should return hashed data" do
       @parser.parse_events(@ev_xml).should == @ev_hash
     end
+    
+    it "event fields parser should return hashed data" do
+      @parser.parse_event_fields(@event_fields_xml).should == @event_fields_hash
+    end
 
     it "simple registration parser should return hashed data" do
       @parser.parse_simple_registrations(@sreg_xml).should == @sreg_hash
@@ -70,6 +110,8 @@ describe "Parser" do
       @parser = RegonlineConnector::Parser.new
       @ev_xml = "<NewDataSet>\n  <Table>\n    </Table>\n</NewDataSet>"
       @ev_hash = {}
+      @event_fields_xml = "<fields><fees /><agendaItems /><customFields /></fields>"
+      @event_fields_hash = {}
       @sreg_xml = "<registrations />"
       @sreg_hash = {}
       @reg_xml = "<string></string>"
@@ -99,6 +141,10 @@ describe "Parser" do
     it "events parser should return empty hash" do
       @parser.parse_events(@ev_xml).should == @ev_hash
     end
+
+    it "event fields parser should return empty hash" do
+      @parser.parse_event_fields(@event_fields_xml).should == @event_fields_hash
+    end
     
     it "simple registration parser should return empty hash" do
       @parser.parse_simple_registrations(@sreg_xml).should == @sreg_hash
@@ -126,6 +172,8 @@ describe "Parser" do
       @parser = RegonlineConnector::Parser.new
       @ev_xml = nil
       @ev_hash = nil
+      @event_fields_xml = nil
+      @event_fields_hash = nil
       @sreg_xml = nil
       @sreg_hash = nil
       @reg_xml = nil
@@ -138,6 +186,10 @@ describe "Parser" do
 
     it "events parser should return nil" do
       @parser.parse_events(@ev_xml).should == @ev_hash
+    end
+    
+    it "event fields parser should return nil" do
+      @parser.parse_event_fields(@evend_fields_xml).should == @event_fields_hash
     end
     
     it "simple registration parser should return nil" do
